@@ -1,0 +1,52 @@
+---
+title: "Test the Integration"
+---
+
+> 👍
+> 
+> The integration test is the last step before launch!
+
+Following the successful integration of the Gordian API in a sandbox or cert environment, we will schedule a session for pre-launch end-to-end-testing with both teams. 
+
+> 📘
+> 
+> Partners should design their systems in such a way that _E2E testing can be performed in sandbox or cert environments._
+
+During testing, partners should perform the bookings themselves and should not use live customer bookings for testing. The partner should ensure that following the testing session, all test bookings (and ancillaries) are successfully voided with the airline.
+
+The partner will complete several end-to-end bookings (testing both successful and failed fulfillments) and Gordian engineers will monitor the API calls. 
+
+---
+
+### Testing Protocol
+
+#### [Trip Creation](/reference/create%5Ftrip)
+
+Verify that markups (if applicable), `fare class`, `fare basis`, and `fare family` are being correctly provided.
+
+#### [Search Creation](/reference/create%5Fsearch)
+
+Ensure that partners have access to all the necessary content.
+
+#### [Add products to basket](/reference/add%5Fto%5Fbasket)
+
+Verify that the products Gordian received in the request correspond correctly to the ones partner intended to add.
+
+#### [Fulfillment Request](/reference/fulfill)
+
+Confirm that the fulfillment request contains information needed for booking, such as access details for the booking.
+
+#### [Correct Callback Set Up](/reference/create%5Fcallback%5Fsubscription)
+
+Upon booking completion, Gordian verifies that a callback was sent  
+Partner confirms that callback was received with correct format and that their systems have updated.
+
+#### [Post Sale Servicing](/reference/informcancelled) (if applicable)
+
+Confirm proper use of the [inform canceled](/reference/informcancelled), [inform changed](/reference/informchanged), and [inform rebooked](/reference/informrebooked) endpoints. 
+
+#### [Secure Trip Access Token Use](/reference/authorizeclient)
+
+Verify that all API requests from client side to Gordian's endpoint are made using the trip access token.
+
+---

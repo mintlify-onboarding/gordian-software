@@ -1,0 +1,55 @@
+---
+title: "(Optional) Bypassing Booking Page Authentication"
+---
+
+## Default Behavior
+
+The Gordian Whitelabel protects a consumer PII by creating a booking confirmation page that validates if the passenger has a valid PNR and last name for accessing a particular session. This works well for email marketing campaigns where it is often expected to access a booking that pnr and last name is necessary. 
+
+![3078](/images/58ed3c8-Screenshot_2023-02-21_at_10.58.17_AM.png "Screenshot 2023-02-21 at 10.58.17 AM.png")
+
+Default authentication page
+
+## Bypassing Authentication Page
+
+For other use cases such as using a link for booking management, this disrupts the flow of the consumer experience and the look and feel of the website. For these cases, we offer booking page authentication bypass where the partner can pre authenticate a link before redirecting users to it.
+
+> 🚧
+> 
+> Booking Page Authentication is Default
+> 
+> If this behavior is consistent with your use case, then this guide is not needed. Only read this guide to bypass the booking authentication page
+
+### Getting JWT tokens to pre-authenticate session
+
+We recommend calling this endpoint to be triggered on the event of a button click or on the load of page. The first step is to make a request to **POST** `authorize/<session_id_encoded>` with the following request body.
+
+JSON
+
+`{
+    "pnr": "pqqdpo",
+    "lastname": "halwa"
+}
+`
+
+This will return the following response if valid
+
+JSON
+
+`{
+  	"status": "authenticated",
+    "access_token": "access-token",
+    "refresh_token": "refresh-token"
+}
+`
+
+if invalid, then a 401 response will occur.
+
+### Attaching JWT Token to URL
+
+Once the JWT token is known, then pass it as query param, named **access\_token**, in the url to bypass the booking page
+
+An example of this is the following is
+
+`{{base_url}}/ancillaries/{{encoded_session_id}}?access_token={{access_token}}
+`

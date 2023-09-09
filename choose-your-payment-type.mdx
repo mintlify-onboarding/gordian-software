@@ -1,0 +1,19 @@
+---
+title: "Choose your payment type"
+---
+
+You can now decide the payment option that is right based on your use case. 
+
+---
+
+Gordian offers various payment types passed into the API as part of the [fulfill call](/reference/fulfill-1).
+
+* _Gordian Settlement_ \- Gordian can purchase the product using its own Virtual Credit Card and send you an invoice which includes the base cost of the ancillary plus the Gordian commission. (**strongly recommended**)
+* _BSP Cash_ \- Gordian can use your [BSP account](https://www.iata.org/en/services/finance/bsp/) to process payments. Gordian can only use BSP Cash as a payment method if Gordian is fulfilling using bridged GDS or NDC connections.
+* _Card_ \- Gordian can support receiving an external credit card for a select number of airlines. (_This requires pre-configuration with your account manager and is **strongly advised against**._)
+
+![](/images/7c94523-payment-type-guide.png "payment-type-guide.png")
+
+Note: The White Label handles payment out of the box so there is no payment decision that needs to be made. See more information on [White Label payments](payment-settlements)
+
+---

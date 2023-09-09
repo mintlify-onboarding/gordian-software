@@ -1,0 +1,229 @@
+---
+title: "Set up bag selection flow"
+---
+
+The first phase of integrating with Gordian consists of installing our Javascript SDK on your existing site, sending customer information to our SDK and interacting with the Gordian endpoints to display the baggage widget
+
+> 📘
+> 
+> Reference API calls in our [Postman Collection](https://postman.gordiansoftware.com/#a548e4b0-e099-4a99-969e-6de7a5f34fa9).
+
+---
+
+### 1\. Set up script tag
+
+In order to enable our Dynamic Upsell Widget to display a baggage widget to your customers, you will first need to enable the widget on your website funnel. To do so, simply add the following tag to the header of the page you wish to display the baggage widget on:
+
+JSX
+
+`<script src="https://sdk.gordiansoftware.com/javascript/v2.2/gordian.min.js"></script>
+`
+
+---
+
+### 2: Get user trip details
+
+After a user selects an itinerary on your website, send this information to your backend via an internal endpoint. This information will be shared with Gordian in the next step and will enable us to access and return the correct availability data.
+
+> 📘
+> 
+> At this point it’s not necessary to share any traveler information (e.g., first name, last name, date of birth, etc.) just yet.
+
+---
+
+### 3: Create a trip with Gordian
+
+All ancillary searches are linked to a `trip`, which represents a user’s trip. 
+
+To create a trip, from your backend server, use the `https://api.gordiansoftware.com/v2.2/trip` endpoint with your `api_key`. 
+
+> 📘
+> 
+> Markups
+> 
+> Use the markup field if you would like to set the markup. Gordian is able to configure the markup for you if you prefer.
+
+> 🚧
+> 
+> `Fare class`, `fare basis`, and `fare family` allow Gordian to retrieve the most accurate pricing and availability. Gordian _strongly recommends_ you provide them. If, however, you can't for any reason, you can input`null` to retrieve results.
+
+In the response, you will receive two tokens that will be required in the subsequent steps of the customer journey: `trip_access_token` and `refresh_token`. You will need to return these back to the frontend via the internal endpoint from **Step 2**. This is where some users have trouble. If you continue to get stuck at this stage please reach out to our team to see where we can help!
+
+> 📘
+> 
+> For more details please access our full API guide [here](/reference/create%5Ftrip).
+
+---
+
+### 4: Initialize Gordian SDK
+
+To initialize the Gordian SDK, call the `Gordian.init` function that will be attached to the browser `Window` object on the frontend. This function requires:
+
+* The `trip_id` and `trip_access_token` you received from creating a trip.
+* A callback function into `onBasketChange`. This function helps you keep track of the products the customer has selected and the state of those products.
+* A event callback function for `onInvalidBasket`. This function enables revalidation of the basket asynchronously for you and provides the optional `Gordian.validateBasket()` function to check the validation state of the basket. See [invalid products](#invalid-products) for more information.
+Sample request 
+
+JSX
+
+`    Gordian.init({
+      tripId: "c1859ade-6ceb-4a7f-9a08-bf5ff33f1129",
+      tripAccessToken: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cl9pZCI6ImMxODU5YWRlLTZjZWItNGE3Zi05YTA4LWJmNWZmMzNmMTEyOSIsImluX2lkIjoiZjM5ZTRkZGQtNGM0Zi00ZTczLWJkOGUtNzBlNjRlZjBhNDdjIiwic2FuZGJveCI6ZmFsc2V9.F3hAHVoHut1Qkpm-wUUkK6b-_DHGMLpJ6CWf9A5ifuLBilwfK52aDVeW8axzwCA2dddKV8oq_Vdo90Z6sv-l_XfVoHsRkSBkSuZsLhj9TZ6WcYElstKr5NJxxUWG6muax_i4ceMTLbWIItr1QUtsSqVGHqrGj46Xvw5hebip-wCnhAjE3-N3rqzM_skDHnJEQwX9OiexrXFXtvwPyhp5UMaDCeuH2j9pw1VnURQVYsv8hBxdyCOWfdiHcwgFzKkSuja2PyYXTk9R1LgJm0KFICEbRer0L31lDYfuxo5_3OK8mnUD0P40xr4g9xoeiQkWumlDJ4fz6crIqlvv1hfj0g",
+      onBasketChange: onBasketChange
+      eventCallbacks: {
+        onInvalidBasket: ({ basket, removed }) => { console.log("basket no longer valid") },
+      }
+    });
+`
+
+> 📘
+> 
+> Tip
+> 
+> For more details on additional parameters to initialize the SDK, click [here](https://docs.gordiansoftware.com/dynamic-upsell-widget/#additional-parameters)
+
+---
+
+### 5: Display Gordian Bags to user
+
+Once the SDK is initialized, use the `Gordian.showUpsell` function to display the widget to the customer. 
+
+> ❗️
+> 
+> Remember to select for the appropriate product for allow product (i.e seats, bags, etc...)
+
+The following is a sample code snippet:
+
+`Gordian.showUpsell({
+  container: document.getElementById("upsell-container"),
+  display: "card", // card | embedded | modal
+  allowProducts: ["bags"], //"seats", "fare_family_upsell", "priority_boading"...
+  excludeProducts: [""],
+  theme: {
+    textPrimary: '#002244',
+  },
+})
+`
+
+The `showUpsell` function has the following inputs:
+
+* `container`: The element ID of the container you want to display the widget within.
+* `display`: This controls how the product is presented to the customer.
+* `allowProducts`: The product type you want to display. For example, use `allowProducts:["seats"]` to display only seats.
+* `excludeProducts`: The product type you do not want to display. For example, use `excludeProducts:["seats"]` to display all products but seats.
+* `theme`: Parts of the seat map visualization can be configured through the `theme` parameter. More information on theming can be found [here](https://docs.gordiansoftware.com/theming).
+
+> 📘
+> 
+> Using Multiple Display Types
+> 
+> Each instance of the Dynamic Upsell widget can only have a single display type. To display two product types in two different displays, add two instances of the Dynamic Upsell widget on your page with different allowed and excluded products.   
+> For more details on **seat map display options**, click [ here](https://docs.gordiansoftware.com/seat-selection-widget/).
+
+---
+
+### 6: Integrate the Gordian basket
+
+Now that the SDK is able to display the Gordian Baggage Widget, you need to keep track of the products the customer selected for purchase using the basket functionality.
+
+> ❗️
+> 
+> Any product that the customer selects must be added to your checkout basket. It is critical that you actively track which products are added or removed from the widget.   
+>  
+> Whenever the basket has anything added or removed, or if an item in the basket expires, the widget calls the `onBasketChange` function.
+
+Sample of this function 
+
+JavaScript
+
+`const onBasketChange = ({ basket }) => {
+  var basketBody = document.getElementById("basket-body");
+  basketBody.innerHTML = "";
+  for (var key in basket) {
+    const product = basket[key];
+    var row = document.createElement("tr");
+    row.classList.remove("invalid");
+    var productCell = document.createElement("td");
+    var priceCell = document.createElement("td");
+    productCell.innerText = product.display_name;
+    priceCell.innerText = window.Gordian.formatPrice(
+      product.price.total.amount,
+      product.price.total.decimal_places,
+      product.price.total.currency
+    );
+    var message = document.createElement("message");
+
+    product.validity = product.validity;
+    if (product.validity.state === "valid") {
+    } else if (product.validity.state === "checking") {
+      row.classList.add("checking");
+      message.innerText = "Checking if this product is still available...";
+    } else if (product.validity.state === "price_changed") {
+      row.classList.add("price_changed");
+      message.innerText = "The price for this product has changed!";
+    } else if (product.validity.state === "unavailable") {
+      row.classList.add("unavailable");
+      message.innerText = "Sorry, this product is no longer available";
+    }
+    priceCell.appendChild(message);
+    row.appendChild(productCell);
+    row.appendChild(priceCell);
+    basketBody.appendChild(row);
+  }
+`
+
+The single parameter to `onBasketChange` is a JSON representation of the whole customer trip. When you receive the JSON object, update your local basket with this new set by replacing all the products previously selected.
+
+The basket includes a lot of granularity on each product. At a minimum, include the `display_name` and the `price` of each product in your basket for the customer's reference. 
+
+The function `Gordian.formatPrice` helps you render the price for your user.
+
+### Invalid products
+
+Products can become invalid because of changed availability or because of new passenger information, such as the age of the passenger or loyalty program information. When the validity changes, the basket object will have different values for the `validity` field. 
+
+By adding the `onInvalidBasket` event callback to the `Gordian.init` function call, the validity will automatically be checked for you and fire the `onInvalidBasket` callback when an item becomes invalid. The `Gordian.validateBasket()` can also be called to recieve an immediate feedback on the state of the basket for example just prior to accepting payment from the user. If the basket is invalid, then notify the user and call `Gordian.showUpsell` again to update the widget with the current valid items.
+
+JavaScript
+
+`const onInvalidBasket = ({ basket, removed }) => {
+    // basket is the current basket with all valid items
+    // removed contains all items that have been removed from the basket due to becoming invalid (ie price_changed or unavailable)
+}
+`
+
+| Validity value | Description                   | Action                                                                                                         |
+| -------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| valid          | This product is still valid.  | N/A                                                                                                            |
+| checking       | Checking is in progress.      | Show a spinner to the user.                                                                                    |
+| price\_changed | The price changed.            | Show the price change to the user and allow them to accept or reject it.                                       |
+| unavailable    | The product is not available. | Inform the user, remove the product from the basket and call the showUpsell function to select an alternative. |
+
+---
+
+### 7: Validate basket and charge user
+
+Review the contents of the basket by [polling the basket](/reference/get%5Fbasket).
+
+* Confirm that all the products in the basket have the status of `valid`.  
+   * If the products have other status values, proceed as follows:  
+   | Status value   | Action item                                                                   |  
+   | -------------- | ----------------------------------------------------------------------------- |  
+   | checking       | Poll the basket information endpoint until the check is complete.             |  
+   | invalid        | Start a check of the basket to refresh validity.                              |  
+   | unavailable    | Inform the customer and possibly give them the option to select alternatives. |  
+   | price\_changed | Inform the customer and possibly give them the option to select alternatives. |
+* Confirm that the customer sees the final price before proceeding.
+* Now we need to validate the basket and charge user.  
+   * If the `valid_until` date has passed, then the [check basket endpoint](/reference/start%5Fbasket%5Fcheck) needs to be called to revalidate the basket.  
+   * Then start **Step 7: Validate basket and charge user** over once more.
+
+---
+
+### 8: Update trip and request Gordian fulfillment
+
+[Update the trip information](/reference/update%5Ftrip) with all pending details such as the record locator (aka **PNR**).
+
+Upon successfully charging the user and receiving the **PNR**, send Gordian a [fulfillment request](/reference/fulfill).
+
+---

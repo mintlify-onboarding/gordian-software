@@ -1,0 +1,25 @@
+---
+title: "Request Fulfillment"
+---
+
+Now that the user has purchased the ticket, it is time to send Gordian a fulfillment request. 
+
+#### Update Trip
+
+[Update the trip information](/reference/update%5Ftrip) with all pending details such as record locator (aka PNR).
+
+---
+
+#### Request Fulfillment
+
+Upon successfully updating the Gordian Trip with the PNR, send Gordian a [fulfillment request](/reference/fulfill).
+
+---
+
+#### Delayed Ticketing Fulfillment
+
+Gordian has a mechanism whereby you can still send ancillary fulfillment requests even if you delay the ticketing of a booking.
+
+To do so, you send Gordian two fulfillment requests, one at the creation of the PNR and one at time of ticketing. At the time of PNR creation, send Gordian a fulfillment request with the parameter is\_ticketed = False. When the booking has been ticketed, send Gordian a second fulfillment request with the parameter is\_ticketed = true. 
+
+Please note, attaching an ancillary to an un-ticketed booking is only possible if you have shared NDC or GDS credentials with Gordian. Availability also varies by airline. Given this, partners who have a system of delayed ticketing should expect a lower fulfillment success rate for ancillaries.

@@ -1,0 +1,198 @@
+---
+title: "Ancillary Servicing"
+---
+
+_This tutorial assumes that you already have your API key for the Gordian API and a fulfilled trip. For more information, see the [getting started guide](/docs/api-basics)._
+
+Working with a booking doesn’t end when fulfillment completes. There are many things that can happen to a booking post-fulfillment. The Gordian API provides ways to continue to monitor and interact with the booking from the time after fulfillment until the point of travel. 
+
+The Gordian API covers the follow four common scenarios:
+
+* [The booking was cancelled](#the-booking-was-cancelled)
+* [There was a change to the booking, and the PNR has stayed the same](#there-was-a-change-to-the-booking-and-the-pnr-has-stayed-the-same)
+* [There was a change to the booking, and the PNR changed](#there-was-a-change-to-the-booking-and-the-pnr-changed)
+* [You want to check the status of products on the booking](#you-want-to-check-the-status-of-products-on-the-booking)
+
+---
+
+### Common Concepts
+
+#### Refund Check
+
+> 📘
+> 
+> Refund Check
+> 
+> When a booking is cancelled or changed, there’s a possibility for the airline to return funds that were used to purchase the ticket or ancillaries attached to the ticket.
+
+Our systems will work with the airline to determine which products are eligible for refunds, how those refunds will be delivered, and how much those refunds are for.
+
+If you were charged for the cost of the product and the airline refunds the product in a manner equivalent to cash (i.e., not a voucher or credit directly to the traveler), we’ll then refund you for the full base price of the product.
+
+#### Order Check
+
+> 📘
+> 
+> Order Check
+> 
+> An order check accesses the current state of the booking and compares it against the last known state of the booking.
+
+The simplest case is that nothing has changed on the booking, and the items are confirmed within the booking.
+
+Other times, products may change - for example, if a traveler moves to a different flight and had purchased a seat on the original flight, they may be rebooked into a different but equivalent seat. Modifications to the booking will be reflected within those specific items, so that you’ll be able to see exactly what has changed.
+
+It’s also possible that a modification to the booking has removed a product that was previously available on the booking. In this case, we’ll mark the item as cancelled, and initiate a [Refund Check](#refund-check) for that item.
+
+#### Equivalent Product
+
+> 📘
+> 
+> An equivalent product is a product that doesn't exactly match the product selected to be booked, but one that still matches the essence of the original product. Because ancillaries come in several forms, the definition of an equivalent product is different for each type of product. The parameters are tunable by you - speak with your account manager to help determine and configure the qualifications of an equivalent product to match the expectations of your target customers.
+
+For bags, an equivalent product is one of the same type (cabin, checked, etc.) and of a larger size. For a 15kg cabin bag, a 20kg cabin bag is an equivalent bag, however the reverse is not true.
+
+For seats, this is typically within two rows and the same row position (seat, middle, aisle) as the initially booked bag. For an aisle seat in row 12, an aisle seat in row 13 is an equivalent product, but a middle seat in row 12 or an aisle seat in row 15 usually isn't.
+
+#### Rebooking Process
+
+> 📘
+> 
+> If a product isn't transferred during a change, we'll attempt to rebook the product. There can be many different scenarios that occur when rebooking a product.
+
+If the exact product is available, we'll rebook the product.
+
+If the exact product isn't available, we'll look for an equivalent product when applicable. As each customer has different preferences of what is considered an equivalent product, please reach out to your account manager to define what you'd like to consider an equivalent product. For bags, Gordian will consider an equivalent product as a bag of the same type (i.e., checked or cabin) and the same or greater size as the bag originally booked.
+
+If the exact product isn't available, and we're either unable to rebook an equivalent product or an equivalent product doesn't exist, we'll mark the product as removed and initiate a refund check. You'll have the option to allow the traveler to choose new products for the changed booking, so that they can ultimately select a product that matches their preferences given the current availability.
+
+---
+
+### The booking was cancelled
+
+If you detect a booking cancellation, you can inform us of it. Gordian will mark the items as cancelled, and attempt to obtain a refund for them.
+
+> 📘
+> 
+> Cancelled Booking Flow
+> 
+> 1. [Inform us of the cancellation](/reference/informCancelled)  
+>   1. The affected `Item`s will be marked as `cancelled`  
+>   2. Using the [Get Trip](/reference/get%5Ftrip) endpoint will allow you to see the new `Item` statuses  
+>   3. A [Refund Check](#refund-check) will be initiated for affected items  
+>   4. You’ll be able to see all relevant `Refund Check`s via the `/trip/:id/ticket/:ticket_id/refund_check` endpoint  
+>   5. If you [subscribe](/reference/Callbacks) to `refund_check_completed` callbacks, we’ll send you a callback once we have gotten a response from the airline about the status of any possible refunds.  
+>   6. You’ll see a refund in your invoice for applicable items
+
+> 📘
+> 
+> Cancelled Booking Flow
+> 
+> 1. [Inform us of the cancellation](/reference/informCancelled)
+> 2. The affected `Item`s will be marked as `cancelled`
+> 3. Using the [Get Trip](/reference/get%5Ftrip) endpoint will allow you to see the new `Item` statuses
+> 4. A [Refund Check](#refund-check) will be initiated for affected items
+> 5. You’ll be able to see all relevant `Refund Check`s via the `/trip/:id/ticket/:ticket_id/refund_check` endpoint
+> 6. If you [subscribe](/reference/Callbacks) to `refund_check_completed` callbacks, we’ll send you a callback once we have gotten a response from the airline about the status of any possible refunds.
+> 7. You’ll see a refund in your invoice for applicable items
+
+---
+
+### There was a change to the booking, and the PNR has stayed the same
+
+When a change occurs to a booking - say, the airline has moved the passenger to a new flight due to a schedule change, or a traveler has altered their booking with the airline - you can let us know, and we’ll sync the Gordian booking with the real world state.
+
+_Note_: This flow applies to both voluntary and involuntary changes. This flow should only be used once you've confirmed the change with the passenger(s); in the case of a voluntary change this confirmation is implied, but in the case of an involuntary change the passenger should accept the itinerary change before informing us of it.
+
+> 📘
+> 
+> Booking Change with the Same PNR Flow
+> 
+> 1. [Inform us of the change](/reference/informChanged), along with the new itinerary  
+>   1. The affected items will be marked as `checking_status`  
+>   2. An [Order Check](#order-check) will be initiated for affected `Item`s  
+>   3. We’ll confirm the product states - in this scenario, some products have been modified  
+>   4. If the product details have been modified (say, the seat location has changed), we’ll add a `product_changed` event to the `Item`  
+>         1. Additionally, `Item` details may be changed to represent the most up-to-date state of the `Item`  
+>   5. If the product no longer exists on the booking, but is available to be rebooked, we'll attempt to rebook  
+>         1. If the same exact product is booked, we'll add a `item_confirmed` event to the `Item`  
+>         2. If a different but applicable product is booked, we'll add a `product_changed` event to the `Item`  
+>         3. If the product isn't able to be rebooked, we'll add a `item_removed` event to the `Item`  
+>         4. Additionally, we’ll mark the `Item` as `cancelled`  
+>         5. We’ll initiate a `RefundCheck` for the `Item`s that no longer exist on the booking  
+>         6. Check out the details in the [How does rebooking work?](#how-does-rebooking-work) section  
+>   6. If the product no longer exists on the booking, we’ll add a `item_removed` event to the `Item`  
+>         1. Additionally, we’ll mark the `Item` as `cancelled`  
+>         2. We’ll initiate a `RefundCheck` for the `Item`s that no longer exist on the booking  
+>   7. If nothing about an item has changed, we’ll add a `product_confirmed` event to the `Item`  
+>   8. If you [subscribe](/reference/Callbacks) to `order_check_completed` callbacks, we’ll send you a callback once it’s completed  
+>   9. Fetch the trip and see the changes to the affected `Item`s
+
+> 📘
+> 
+> Booking Change with the Same PNR Flow
+> 
+> 1. [Inform us of the change](/reference.html#operation/informChanged), along with the new itinerary  
+>   1. The affected items will be marked as `checking_status`  
+>   2. An [Order Check](#order-check) will be initiated for affected `Item`s  
+>   3. We’ll confirm the product states - in this scenario, some products have been modified  
+>   4. If the product details have been modified (say, the seat location has changed), we’ll add a `product_changed` event to the `Item`  
+>         1. Additionally, `Item` details may be changed to represent the most up-to-date state of the `Item`  
+>   5. If the product no longer exists on the booking, but is available to be rebooked, we'll attempt to rebook  
+>         1. If the same exact product is booked, we'll add a `item_confirmed` event to the `Item`  
+>         2. If a different but applicable product is booked, we'll add a `product_changed` event to the `Item`  
+>         3. If the product isn't able to be rebooked, we'll add a `item_removed` event to the `Item`  
+>         4. Additionally, we’ll mark the `Item` as `cancelled`  
+>         5. We’ll initiate a `RefundCheck` for the `Item`s that no longer exist on the booking  
+>         6. Check out the details in the [How does rebooking work?](#how-does-rebooking-work) section  
+>   6. If the product no longer exists on the booking, we’ll add a `item_removed` event to the `Item`  
+>         1. Additionally, we’ll mark the `Item` as `cancelled`  
+>         2. We’ll initiate a `RefundCheck` for the `Item`s that no longer exist on the booking  
+>   7. If nothing about an item has changed, we’ll add a `product_confirmed` event to the `Item`  
+>   8. If you [subscribe](/reference.html#tag/Callbacks) to `order_check_completed` callbacks, we’ll send you a callback once it’s completed  
+>   9. Fetch the trip and see the changes to the affected `Item`s
+
+---
+
+### There was a change to the booking, and the PNR changed
+
+Sometimes a change will happen to the booking that will require a reissue of a PNR. You can identify these scenarios when a new confirmation code is used to reference the booking.
+
+> 📘
+> 
+> Booking Change with New PNR
+> 
+> 1. [Inform us of the rebooking](/reference/informRebooked), along with the new itinerary and new access details  
+>   1. You should use the `ticket_id` of the `Ticket` associated with the PNR that's being rebooked  
+>   2. The `Ticket` associated with the `ticket_id` used will be considered cancelled  
+>   3. A new `Ticket` will be created on the `Trip`, associated with the new itinerary and access details you provided  
+>   4. The fulfilled products from the original `Ticket` will be added to the new `Ticket`  
+>   5. An [Order Check](#order-check) will be initiated for `Item`s transferred to the new `Ticket`  
+>   6. We’ll check that the products were transferred to the new booking  
+>   7. If the product details have been modified (say, the seat location has changed), we’ll add a `product_changed` event to the `Item`  
+>         1. Additionally, `Item` details may be changed to represent the most up-to-date state of the `Item`  
+>   8. If the product no longer exists on the booking, we’ll add a `product_removed` event to the `Item`  
+>         1. Additionally, we’ll mark the `Item` as `cancelled`  
+>         2. We’ll initiate a `RefundCheck` for the `Item`s on the original PNR that weren't transferred to the new PNR  
+>   9. If nothing about an item has changed, we’ll add a `product_confirmed` event to the `Item`  
+>   10. If you [subscribe](/reference/Callbacks) to `order_check_completed` callbacks, we’ll send you a callback once it’s completed
+
+---
+
+### You want to check the status of products on the booking
+
+> 📘
+> 
+> Check Status of Products in the Booking
+> 
+> 1. Request an Order Check \[endpoint coming soon\]  
+>   1. An [Order Check](#order-check) will be initiated for affected `Item`s  
+>   2. We’ll confirm the product states - in this scenario, some products have been modified  
+>   3. If the product details have been modified (say, the seat location has changed), we’ll add a `product_changed` event to the `Item`  
+>         1. Additionally, `Item` details may be changed to represent the most up-to-date state of the `Item`  
+>   4. If the product no longer exists on the booking, we’ll add a `product_removed` event to the `Item`  
+>         1. Additionally, we’ll mark the `Item` as `cancelled`  
+>         2. We’ll initiate a `RefundCheck` for the `Item`s that no longer exist on the booking  
+>   5. If nothing about an item has changed, we’ll add a `product_confirmed` event to the `Item`  
+>   6. If you [subscribe](/reference/Callbacks) to `order_check_completed` callbacks, we’ll send you a callback once it’s completed
+
+---

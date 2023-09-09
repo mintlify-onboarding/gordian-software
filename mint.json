@@ -1,0 +1,142 @@
+{
+    "name": "Gordian",
+    "logo": {
+      "light": "/logo/light-logo.svg",
+      "dark": "/logo/dark-logo.svg"
+    },
+    "favicon": "/favicon.png",
+    "colors": {
+      "primary": "#273096",
+      "light": "#607EC6",
+      "dark": "#1E1E6B",
+      "ultraLight": "#D2DDE9",
+      "ultraDark": "#140C3F"
+    },
+    "api": {
+        "baseUrl": "https://api.gordiansoftware.com"
+    },
+    "topbarCtaButton": {
+      "name": "Get in Touch",
+      "url": "https://api.gordiansoftware.com"
+    },
+    "topbarLinks": [
+      {
+        "name": "Inights",
+        "url": "https://www.gordiansoftware.com/insights"
+      }
+    ],
+    "tabs": [
+        {
+            "name": "API Reference",
+            "url": "api-reference"
+        }
+     ],
+     "navigation": [
+        {
+            "group": "Get Started",
+            "pages": [
+              "api-basics",
+              "choose-your-integration",
+              "choose-your-payment-type",
+              "api-key-and-authentication",
+              "select-an-implementation-guide"
+            ]
+        },
+        {
+            "group": "Authorization",
+            "pages": [
+              "api-reference/authorization/authorize-for-trip-creation",
+              "api-reference/authorization/refresh-trip-access-token"
+            ]
+        },
+        {
+            "group": "Trip",
+            "pages": [
+              "api-reference/trip/create-trip",
+              "api-reference/trip/get-trip",
+              "api-reference/trip/update-trip",
+              "api-reference/trip/get-trip-actions",
+              "api-reference/trip/list-item-events"
+            ]
+        },
+        {
+            "group": "Basket",
+            "pages": [
+              "api-reference/basket/get-the-basket",
+              "api-reference/basket/update-the-basket",
+              "api-reference/basket/add-to-basket",
+              "api-reference/basket/update-basket-for-product-type",
+              "api-reference/basket/update-basket-for-product-type-per-passenger",
+              "api-reference/basket/check-basket"
+            ]
+        },
+        {
+            "group": "Fulfill",
+            "pages": [
+              "api-reference/fulfill/fulfill",
+              "api-reference/fulfill/hold-booking"
+            ]
+        },
+        {
+            "group": "Search",
+            "pages": [
+              "api-reference/search/product-details",
+              "api-reference/search/search",
+              "api-reference/search/get-search-results",
+              "api-reference/search/search-results-per-product"
+            ]
+        },
+        {
+            "group": "RefundCheck",
+            "pages": [
+              "api-reference/refundcheck/list-refund-checks",
+              "api-reference/refundcheck/create-refund-check",
+              "api-reference/refundcheck/get-refund-check"
+            ]
+        },
+        {
+            "group": "OrderCheck",
+            "pages": [
+              "api-reference/ordercheck/list-order-checks",
+              "api-reference/ordercheck/create-order-check",
+              "api-reference/ordercheck/get-order-check"
+            ]
+        },
+        {
+            "group": "Servicing",
+            "pages": [
+              "api-reference/servicing/inform-gordian-of-a-cancellation",
+              "api-reference/servicing/inform-gordian-of-a-change-to-a-pnr",
+              "api-reference/servicing/inform-gordian-of-a-pnr-being-rebooked-to-a-new-pnr",
+              "api-reference/servicing/deny-refund-in-sandbox",
+              "api-reference/servicing/issue-refund-in-sandbox",
+              "api-reference/servicing/remove-product-in-sandbox",
+              "api-reference/servicing/confirm-product-in-sandbox",
+              "api-reference/servicing/change-product-in-sandbox"
+            ]
+        },
+        {
+            "group": "Cancel",
+            "pages": [
+              "api-reference/cancel/get-cancellation-details",
+              "api-reference/cancel/start-cancellation-check",
+              "api-reference/cancel/confirm-cancellation"
+            ]
+        },
+        {
+            "group": "Callbacks",
+            "pages": [
+              "api-reference/callbacks/list-callbacks-for-trip-event",
+              "api-reference/callbacks/list-callback-subscriptions",
+              "api-reference/callbacks/create-callback-subscription",
+              "api-reference/callbacks/get-callback-subscription",
+              "api-reference/callbacks/deactivate-callback-subscription"
+            ]
+        }
+      ],
+    "footerSocials":
+      {
+          "linkedin": "https://www.linkedin.com/company/gordian-software/"
+      }
+  }
+  

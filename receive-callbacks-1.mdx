@@ -1,0 +1,448 @@
+---
+title: "Receive Callbacks"
+---
+
+The next phase step is to set up callbacks so that you are notified when a booking is fulfilled or fails. Callbacks need to be set up only once, regardless of how many different Gordian services you end up integrating in your journey flow.
+
+---
+
+### Whitelist IPs
+
+To facilitate callbacks, you'll need to configure your IP whitelist to allow calls from Gordian's services.
+
+Please allow the following IP addresses:
+
+* `54.225.138.8`
+* `52.6.216.177`
+* `52.7.148.215`
+* `52.72.130.32`
+* `54.193.225.146`
+
+---
+
+### Create Callback Subscription
+
+After whitelisting the IPs, you can [create a callback subscription](/reference/create%5Fcallback%5Fsubscription)
+
+---
+
+### Example Callback Response: Fulfillment Complete
+
+Here is an example callback response for when a fulfillment is completed successfully. The `trip` JSON is a representation of a trip object, similar to the response you receive when [Getting a Trip](/reference/get%5Ftrip).
+
+Response
+
+`{
+  "event": {
+  	"trip": {
+      "basket": {},
+      "orders": {
+        "1c3df555-a2dc-4813-a055-2a8bf56fd8f1": {
+          "status": "fulfilled",
+          "order_id": "1c3df555-a2dc-4813-a055-2a8bf56fd8f1",
+          "benefits": [],
+          "display_name": "10kg Bag",
+          "fulfillment_source": "external",
+          "price": {
+            "base": {
+              "amount": 2000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 1820,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            },
+            "fees": [],
+            "markups": [
+              {
+                "amount": 600,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 546,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "markup_type": "markup"
+              }
+            ],
+            "taxes": [
+              {
+                "amount": 200,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 182,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "tax_type": "tax"
+              }
+            ],
+            "total": {
+              "amount": 2400,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 2184,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            }
+          },
+          "product_details": {
+            "checked": false,
+            "journey_id": "1770bf8f-0c1c-4ba5-99f5-56e446fe79ba",
+            "passenger_id": "p1",
+            "size": 150,
+            "size_unit": "cm",
+            "weight": 10,
+            "weight_unit": "kg"
+          },
+          "product_id": "741bcc97-c2fe-4820-b14d-f11f32e6fadb",
+          "product_type": "bag",
+          "quantity": 1,
+          "ticket_id": "e8558737-2ec0-436f-89ec-00e7a20b3252"
+        },
+        "2654f3f9-8990-4d2e-bdea-3b341ad5d1de": {
+          "status": "fulfillment_failed",
+          "order_id": "2654f3f9-8990-4d2e-bdea-3b341ad5d1de",
+          "benefits": [],
+          "display_name": "Seat 15C",
+          "price": {
+            "base": {
+              "amount": 2000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 1820,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            },
+            "fees": [],
+            "markups": [
+              {
+                "amount": 400,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 364,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "markup_type": "markup"
+              }
+            ],
+            "taxes": [
+              {
+                "amount": 200,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 182,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "tax_type": "tax"
+              }
+            ],
+            "total": {
+              "amount": 2600,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 2366,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            }
+          },
+          "product_details": {
+            "column": "C",
+            "passenger_id": "p1",
+            "row": 15,
+            "segment_id": "1770bf8f-0c1c-4ba5-99f5-56e446fe79ba"
+          },
+          "product_id": "a17e10ca-0c9a-4691-9922-d664a3b52382",
+          "product_type": "seat",
+          "quantity": 1,
+          "ticket_id": "e8558737-2ec0-436f-89ec-00e7a20b3252"
+        },
+        "5d5e1bce-4577-4118-abcb-155823d8b4a3": {
+          "status": "fulfilled",
+          "order_id": "5d5e1bce-4577-4118-abcb-155823d8b4a3",
+          "benefits": [],
+          "display_name": "10kg Bag",
+          "fulfillment_source": "external",
+          "price": {
+            "base": {
+              "amount": 1000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 1000,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            },
+            "fees": [],
+            "markups": [
+              {
+                "amount": 200,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 200,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "markup_type": "markup"
+              }
+            ],
+            "taxes": [],
+            "total": {
+              "amount": 1200,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 1200,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            }
+          },
+          "product_details": {
+            "checked": false,
+            "journey_id": "aab8980e-b263-4624-ad40-d6e5e364b4e9",
+            "size": 150,
+            "size_unit": "cm",
+            "weight": 10,
+            "weight_unit": "kg"
+          },
+          "product_id": "c074cd12-6b7f-4773-85d5-ddf1d1fd4a46",
+          "product_type": "bag",
+          "quantity": 2,
+          "ticket_id": "8c1c9fc8-d968-4733-93a8-6067bac2543f"
+        },
+        "6acd57ba-ccb7-4e86-85e7-b3e586caeae2": {
+          "status": "fulfillment_failed",
+          "order_id": "6acd57ba-ccb7-4e86-85e7-b3e586caeae2",
+          "benefits": [],
+          "display_name": "Seat 16A",
+          "price": {
+            "base": {
+              "amount": 1000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 1000,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            },
+            "fees": [],
+            "markups": [],
+            "taxes": [],
+            "total": {
+              "amount": 1000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 1000,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            }
+          },
+          "product_details": {
+            "column": "A",
+            "passenger_id": "p1",
+            "row": 16,
+            "segment_id": "938d8e82-dd7c-4d85-8ab4-38fea8753f6f"
+          },
+          "product_id": "8b894895-da86-48d8-a787-0b834aa54e08",
+          "product_type": "seat",
+          "quantity": 1,
+          "ticket_id": "8c1c9fc8-d968-4733-93a8-6067bac2543f"
+        },
+        "dffac4ba-73b9-4b1b-9334-001817fff0cf": {
+          "status": "fulfilled",
+          "order_id": "dffac4ba-73b9-4b1b-9334-001817fff0cf",
+          "benefits": [],
+          "display_name": "Economy Ticket",
+          "price": {
+            "base": {
+              "amount": 12000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 12000,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            },
+            "fees": [],
+            "markups": [
+              {
+                "amount": 2000,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 2000,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "markup_type": "markup"
+              }
+            ],
+            "taxes": [
+              {
+                "amount": 2000,
+                "currency": "USD",
+                "decimal_places": 2,
+                "in_original_currency": {
+                  "amount": 2000,
+                  "currency": "USD",
+                  "decimal_places": 2
+                },
+                "tax_type": "tax"
+              }
+            ],
+            "total": {
+              "amount": 16000,
+              "currency": "USD",
+              "decimal_places": 2,
+              "in_original_currency": {
+                "amount": 16000,
+                "currency": "USD",
+                "decimal_places": 2
+              }
+            }
+          },
+          "product_details": {
+            "journeys": [
+              {
+                "journey_id": "aab8980e-b263-4624-ad40-d6e5e364b4e9",
+                "segments": [
+                  {
+                    "arrival_airport": "LHR",
+                    "arrival_time": "2020-07-07T22:30:00Z",
+                    "departure_airport": "EDI",
+                    "departure_time": "2020-07-07T21:10:00Z",
+                    "fare_basis": "OTZ0RO/Y",
+                    "fare_class": "O",
+                    "fare_family": "Basic Economy",
+                    "marketing_airline": "BA",
+                    "marketing_flight_number": "1465",
+                    "number_of_stops": 0,
+                    "operating_airline": "BA",
+                    "operating_flight_number": "1465",
+                    "segment_id": "938d8e82-dd7c-4d85-8ab4-38fea8753f6f"
+                  }
+                ]
+              }
+            ]
+          },
+          "product_id": "2846068e-6fd0-4329-ac70-da79a57b21f7",
+          "product_type": "ticket",
+          "quantity": 1,
+          "ticket_id": "8c1c9fc8-d968-4733-93a8-6067bac2543f"
+        }
+      },
+      "country": "US",
+      "currency": "USD",
+      "journeys": [
+        {
+          "journey_id": "aab8980e-b263-4624-ad40-d6e5e364b4e9",
+          "segments": [
+            {
+              "arrival_airport": "LHR",
+              "arrival_time": "2020-07-07T22:30:00Z",
+              "departure_airport": "EDI",
+              "departure_time": "2020-07-07T21:10:00Z",
+              "fare_basis": "OTZ0RO/Y",
+              "fare_class": "O",
+              "fare_family": "Basic Economy",
+              "marketing_airline": "BA",
+              "marketing_flight_number": "1465",
+              "number_of_stops": 0,
+              "operating_airline": "BA",
+              "operating_flight_number": "1465",
+              "segment_id": "938d8e82-dd7c-4d85-8ab4-38fea8753f6f"
+            }
+          ]
+        },
+        {
+          "journey_id": "1770bf8f-0c1c-4ba5-99f5-56e446fe79ba",
+          "segments": [
+            {
+              "arrival_airport": "EDI",
+              "arrival_time": "2020-07-14T08:35:00Z",
+              "departure_airport": "LGW",
+              "departure_time": "2020-07-14T07:05:00Z",
+              "fare_basis": "NALZ0KO/Y",
+              "fare_class": "N",
+              "fare_family": "Basic Economy",
+              "marketing_airline": "BA",
+              "marketing_flight_number": "2500",
+              "number_of_stops": 0,
+              "operating_airline": "BA",
+              "operating_flight_number": "2500",
+              "segment_id": "7d693cb0-d6d8-49f0-9489-866b3d789215"
+            }
+          ]
+        }
+      ],
+      "language": "en-US",
+      "passengers": [
+        {
+          "first_names": "Vincent Willem",
+          "passenger_id": "ee850c82-e150-4f35-b0c7-228064c2964b",
+          "surname": "Van Gogh"
+        }
+      ],
+      "tickets": [
+        {
+          "ticket_basket_item_id": "dffac4ba-73b9-4b1b-9334-001817fff0cf",
+          "basket_item_ids": [
+            "dffac4ba-73b9-4b1b-9334-001817fff0cf",
+            "6acd57ba-ccb7-4e86-85e7-b3e586caeae2",
+            "5d5e1bce-4577-4118-abcb-155823d8b4a3"
+          ],
+          "journey_ids": [
+            "aab8980e-b263-4624-ad40-d6e5e364b4e9"
+          ],
+          "status": "in_basket",
+          "ticket_id": "8c1c9fc8-d968-4733-93a8-6067bac2543f"
+        },
+        {
+          "basket_item_ids": [
+            "2654f3f9-8990-4d2e-bdea-3b341ad5d1de",
+            "1c3df555-a2dc-4813-a055-2a8bf56fd8f1"
+          ],
+          "journey_ids": [
+            "1770bf8f-0c1c-4ba5-99f5-56e446fe79ba"
+          ],
+          "offered_price": {
+            "currency": "USD",
+            "decimal_places": 2,
+            "total": 20000
+          },
+          "status": "offered",
+          "ticket_id": "e8558737-2ec0-436f-89ec-00e7a20b3252"
+        }
+      ],
+      "trip_access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "trip_id": "23259b86-3208-44c9-85cc-4b116a822bff",
+      "trip_state_hash": "69abcc117863186292bdf5f1c0d94db1e5227210935e6abe039cfb017cbefbee",
+      "is_ticketed": true
+    },
+    "event_type": "fulfillment_completed",
+  }
+}
+`
+
+You can use `trip` and `event_type` once received to determine next-steps on your system's side.

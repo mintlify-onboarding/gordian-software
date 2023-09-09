@@ -1,0 +1,101 @@
+---
+title: "Servicing Tutorial"
+---
+
+## Flight Servicing
+
+_This tutorial assumes that you already have your API key and have selected the authentication and authorization methods to use the Gordian API. For more information, see the [getting started guide](/docs/api-basics)._
+
+You can provide service to a flight booking that was not booked through Gordian. To provide service to a booking, you must [register it with Gordian](#register-a-booking). After registration, you can do the following actions as needed.
+
+1. [Check a booking](#check-a-booking)
+2. [Change a booking](#change-a-booking)
+3. [Cancel a booking](#cancel-a-booking)
+
+> 📘
+> 
+> The following processes are the same as in [Flight booking](/flights-tutorial/). When you are able to provide servicing, you can start selling flight tickets with minor modifications. Contact your account manager for more information.
+
+---
+
+### Register a booking
+
+To register a booking, follow these steps:
+
+1. [Create a trip using](/reference/create%5Ftrip) the record locator. You receive a `trip_id` to use in all servicing requests.
+2. Wait 24 hours before making any servicing requests.
+
+---
+
+### Check a booking
+
+Airlines may change bookings without necessarily informing the customer. You can start a check of all the items in a booking with the following steps:
+
+1. Use the same `trip_id` of the trip you registered.
+2. [Start a check](/reference/createordercheck) of the trip.
+3. [Poll the trip information](/reference/get%5Ftrip) endpoint until the state is no longer `check_in_progress`.  
+   * Each of the products in the `orders` object has its own status.
+
+> 📘
+> 
+> Subscribe to the callbacks
+> 
+> [Subscribe to the callbacks](/reference/subscribe) to receive a notification with the final state of the checking process.
+
+---
+
+### Change a booking
+
+#### Voluntary changes
+
+To voluntarily change an existing booking, follow these steps:
+
+1. Use the same `trip_id` of the trip which already has tickets booked.
+2. [Check the eligibility](/reference/getCapabilities) of the ticket booking in the trip to determine if change is allowed.
+3. [Search for ticket change](/reference/createChangeSearch) using `booking_id` from eligibility check  
+   * Define the _new_ journeys in the search  
+   * The prices in the search results are the cost of changing, _not the base prices_.
+4. Proceed with checking and booking changes using the same flow as the initial search.
+
+##### Support By Airline
+
+| Carrier | Date Change                                                                         | Route Change                                                                        |
+| ------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| LHG     | ![:white-check-mark:](/images/white-check-mark.png ":white-check-mark:") | ![:white-check-mark:](/images/white-check-mark.png ":white-check-mark:") |
+| IB      | ![:white-check-mark:](/images/white-check-mark.png ":white-check-mark:") | ![:x:](/images/x.png ":x:")                                              |
+
+> 📘
+> 
+> Talk to us
+> 
+> Contact your account manager for more information about support for voluntary changes to a booked flight
+
+---
+
+#### Involuntary changes
+
+If you [subscribed to notifications](/reference/subscribe), you receive a callback in the event of the following involuntary changes:
+
+* `involuntary_change`: there is no action to be taken by the customer. For example, the schedule changed by a small amount.
+* `involuntary_cancellation`: The product has been cancelled and refunded. Each product has its own `refund_amount` property.
+* `customer_action_needed`: the customer must choose an option:  
+   * _Get a refund_. They can proceed through the [cancellation process](#cancel-a-booking).  
+   * _Select an alternative_. The customer must select an alternative from a list. Add the selection to the basket and fulfill. If the booking has ancillaries and there was a change, you receive an `involuntary_change` callback.
+
+---
+
+### Cancel a booking
+
+When the customer wants to cancel a booking, follow these steps:
+
+1. [Start a cancellation check](/reference/start%5Fcancellation%5Fcheck) for every product in the booking.
+2. [Poll cancellation details](/reference/get%5Fcancellation%5Famount) endpoint to get the results of the check. It includes the refund amount for the products and each product that would be cancelled with it, for example, seat or bag selection.
+3. [Confirm cancellation](/reference/cancel). Starts the cancellation with the airline.
+4. [Poll the trip information](/reference/get%5Ftrip) endpoint to see the status of the cancellation.  
+   * Each of the products in the `orders` object has its own status.
+
+> 📘
+> 
+> [Subscribe to the Cancellation Completed callback](/reference/subscribe) to receive a notification with the final state of the process.
+
+---

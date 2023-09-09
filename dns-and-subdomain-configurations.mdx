@@ -1,0 +1,16 @@
+---
+title: "DNS and Subdomain Configurations"
+---
+
+Part of the value proposition that we provide to our partners is the truly personalised White Label. As part of that effort, we will be providing support to set up the necessary configurations so that the booking URL that is provided to the passenger belongs to the partner's domain. 
+
+If configured correctly, your passengers will be able to access White Label through your own subdomain.
+
+For the purpose of this guide, let's take the example of an online travel agency, `vacation tours`, whose domain is `vacationtours.com`  
+Let's say vacation tours would like to setup a subdomain (`post-booking.vacationtours.com`) for White Label so that their passengers can access `www.post-booking.vacationtours.com` to be able to access White Label's features. Here are the steps to follow:
+
+1. Find your DNS provider’s DNS record settings for your apex domain (i.e. `vacationtours.com`).
+2. Add a **CNAME record** with your subdomain (e.g. `post-booking`) set as the host. You may refer to this google tutorial for more information: [https://cloud.google.com/identity/docs/add-cname](https://cloud.google.com/identity/docs/add-cname)
+3. Point the record to the white label’s subdomain: [ancillary-whitelabel.gordiansoftware.com](https://ancillary-whitelabel.gordiansoftware.com/).
+4. Save your settings. Depending on your DNS provider, **changes to DNS records can take several hours to propagate and take effect for the entire internet.** If you can’t access the custom domain after 24 hrs please try **troubleshooting your DNS** configuration or **contact us for assistance.**
+5. Let Gordian know the subdomain you’ll be using through any of the official communication channels.

@@ -1,0 +1,79 @@
+---
+title: "Create Session From Trip"
+---
+
+For partners that already have an integration with Gordian's Core API, integrating White Label's postbooking session is very simple! If you already have a Gordian Trip created and have an accompanying trip\_id for the trip for which you wish to add ancillaries post-booking with White Label, you need not provide the itinerary and passenger details again! You can simply pass us the `trip_id` and we will do the rest!
+
+To create a session using this method, a post request is to be made to the following endpoint:  
+`POST REQUEST` `https://whitelabel.gordiansoftware.com/post-booking-session/trip/<trip_id>`
+
+> 📘
+> 
+> Authentication
+> 
+> Authentication uses Basic Auth Format with the provided API key as username and an empty password
+
+We will initially provide a sandbox API key for you to be able to test our endpoints. When using this sandbox API key, entire End-to-End fulfillment tests can be performed without actual fulfillment of ancillaries. Production API key will only be given after successful integration of White Label. Check the following [Integration Protocol documentation](https://www.notion.so/Integration-Protocol-da99ac74755c4b96ac6c4dcb5e0e9d0b) for more information: 
+
+### URL Params
+
+`/post-booking-session/trip/<trip_id>`
+
+1. `trip_id` : The trip\_id of the trip for which you wish to add ancillaries post-booking `required`
+
+### Request Body
+
+We require the following information to be present in the request body under the indicated keys:
+
+1. `partner_url_id` : The Partner\_url\_id that helps us identify where this request is coming from `required`
+2. `booking_id` : An unique id that can help you differentiate between the different bookings you manage `optional`
+
+> 📘
+> 
+> Booking\_id
+> 
+> If provided, the resultant session\_id is a function of the partner\_id that we provide you and the booking\_id (See below for more information). This saves you the hassle of having to manage another session\_id in your databases.
+
+### Sample Request Body:
+
+JavaScript
+
+`    {
+	"partner_url_id": "b5b978d7-19ab-4638-b596-f5cef08a1433", 
+	"booking_id": "123456789ff1"	
+}
+`
+
+### Sample Response:
+
+If done correctly, calling this endpoint will return the following data:
+
+`{
+	"url": "https://gordian-ancillaries-white-label.netlify.app/ancillaries/<BASE64_encoded_session_id>"
+}
+`
+
+The `BASE64_encoded_session_id` appended to the back of the base URL can be decoded to obtain the session id corresponding to the particular trip in question.  
+Below we have the python code example to specify how to do that.
+
+`import base64
+
+def base64_decode(data: str):
+    return base64.urlsafe_b64decode(bytes(data, "utf-8")).decode("utf-8")
+`
+
+The decoded session\_id will then take on the following form:
+
+* if a booking id was provided:  
+   * session_id = {partner\_id}_{booking\_id}
+* if a booking id was not provided:  
+   * session_id = {partner\_id}_{GORDIAN\_UUID}
+
+As an example, if the `partner_id` we provided you with is : `a77da86a-d70e-42a2-83b8-2358f4d7e1c3`  
+and you provided us with a booking\_id of `12345678`, the resultant session\_id is `a77da86a-d70e-42a2-83b8-2358f4d7e1c3_12345678`
+
+> ❗️
+> 
+> Encoded url\_safe encoded session\_id
+> 
+> We expect the session\_id to be encoded in the url safe base64 encoding scheme when making subsequent requests to other endpoints where the session\_id is required. An error will be thrown otherwise.

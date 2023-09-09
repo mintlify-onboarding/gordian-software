@@ -1,0 +1,60 @@
+---
+title: "Integration Process"
+---
+
+We're very excited that you've chosen to integrate with White Label. We look forward to helping your business maximize ancillary sales post booking. This page is intended to serve as a plan for your business integration with Gordian Software’s White Label product. It will outline the different testing phases of the integration, the outcomes to achieve by the end of phase and a guide on how to achieve them.
+
+### Step 1 - The Boring Stuff
+
+ Before we kick off the exciting White Label integration and start selling ancillaries to travelers, we must cover a few important commercial topics related to payments. Our commercial team will collaborate with your commercial team to come to an agreement on these terms.
+
+* **Stripe Fee:**  
+   * Our White Label product uses Stripe to collect payments from the passengers. Stripe charges a fee that is non-refundable for all captured transactions. You will be responsible for this fee and it will be incurred from your markup amount.  
+   * In the event that a refund is available for the passenger who has either involuntarily or voluntarily requested it, 100% of the funds will be refunded back to the customer. However, the Stripe fee remains non-refundable.
+* **Payment Transfer:**  
+   * Gordian will capture the payment from the customers initially and your cut will be transferred on a monthly basis A detailed invoice will outline all the ancillaries sold for the month and the amount earned for each.  
+   * We process all payments to partners via one of the following payment methods. Let us know what works best for you:  
+         * ACH  
+         * Wire Transfer
+* **Status Updates:**  
+   * Let us know how you would like to receive the status updates on every booking:  
+         1. via callbacks  
+         2. email notifications  
+         3. or both
+
+### Step 2 - Get Access
+
+ Following the agreement on the above mentioned points, the following actions will occur in parallel:
+
+* You will receive an invitation to a shared Slack channel between our teams
+* We will issue you sandbox credentials to allow you to start exploring the API
+* Our commercial team will send an initial commercial proposal
+
+### Step 3 - Technical Integration
+
+ Please refer to our [technical documentation](/docs/create-session) and [postman collection](https://documenter.getpostman.com/view/20988392/UzBvFNMz) to for a detailed description on the technical integration. Feel free to reach out to our engineers via the shared slack channel to get your questions answered. The outline below will walk you through briefly how integration testing is to be done
+
+### Step 4 - Technical Integration Testing Phase 1: Session creation and ancillary availability
+
+1. Create a personalized booking URL for the trip in question by following [this tutorial](/docs/create-session)
+2. Access the URL that is returned in the API response
+3. Check that the correct Itinerary and passenger information is loaded into the Gordian White Label site that is opened
+4. Verify that the seatmap and/or bag widget loads and that you are able to select the ancillaries just as a passenger should be able to.
+
+### Step 5 - Technical Integration Testing Phase 2: Payment
+
+1. Go to the Checkout Page by clicking on the “Checkout” button
+2. Check that payment works by trying out the different payment options that are available  
+   1. You may try out the different [test credit cards](https://stripe.com/docs/testing#cards) that Stripe provides to proceed with the payment. (None of the payments will actually be processed as you are still in the sandbox environment. So you may safely test as many test bookings as necessary)
+
+### Step 6 - Technical Integration Testing Phase 3: Status Updates
+
+Verify that you receive all necessary status updates through your chosen method for all test bookings. 
+
+### Step 7 - Launch
+
+After the confirmation of the above technical integration steps, the Gordian team will issue production credentials for you. The teams will agree on a launch date with a portion of traffic and will schedule a call with members of both teams to monitor the initial release.
+
+### Step 8 - Monitor
+
+Following the launch, we will monitor incoming traffic and provide updates in the shared Slack channel.

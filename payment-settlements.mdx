@@ -1,0 +1,23 @@
+---
+title: "Payment Settlements"
+---
+
+### Stripe Account
+
+Payments and fund transfers and distribution is all handled through Stripe on our backend. However we do not require our partners to setup a Stripe Account.
+
+### Payment Flow
+
+![2584](/images/660eb32-payment_flow.png "payment_flow.png")
+
+Payment Flow
+
+1. In step one, our partners will have a discusstion with goridan to determine their markups on seats and baggages as well as the revenue split for the fulfilled sales.
+2. Payment is made by the passengers directly using their own credit card
+3. Gordian receives payment minus the stripe transaction fees
+4. In the event of a failed fullfillment,  
+   1. a status update is sent to partner's callback endpoint  
+   2. Refund process is started automatically to refund the passenger the amount they paid directly through their original payment method
+5. In the event of a successful fullfillment,  
+   1. The transactions are collated on a weekly or monthly basis and the invoice is sent over to our partners for settlement.  
+   2. A status update is sent to partner's callback. A confirmation email is sent to the passengers and partners with their ancillary confirmation.

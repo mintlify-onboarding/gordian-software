@@ -1,0 +1,273 @@
+---
+title: "Other Support Endpoints"
+---
+
+These endpoints outlined in this document aim to provide you with other additional support as you integrate White Label in your business operations. Using these endpoints is optional but if utilized correctly, will definitely elevate the customer experience.
+
+### Fulfillment Fields Validator
+
+For Gordian to be able to successfully attach the selected ancillaries to the customer booking, we require some mandatory information. This endpoint serves to pinpoint the exact data that is missing from information that has already been provided to Gordian during session creation or update. This endpoint will provide a list of errors encountered when Gordian validates the data you provide and serves to inform you when you are missing any required information.
+
+To fetch the list of errors a POST request is to be made to the following endpoint:
+
+> 📘
+> 
+> Post Request
+> 
+> `https://whitelabel.gordiansoftware.com/post-booking-session/check-fields/{{encoded_session_id}}`
+
+The response of this endpoint should be used as a guide to determine what fields are required but not yet being provided. Once all requirements are met, it is no longer necessary to interact with this endpoint. If the data provided is sufficient for fulfillment, an empty `errors` array will be returned like so:
+
+`{
+  "errors": []
+}
+`
+
+Otherwise, the array will contain the errors that were gathered during data validation. An example of such a response would be as follows:
+
+`{
+  "errors": [
+    [
+      "no_access_details",
+      "Access details needed for tickets: 66b91327-9d85-40fc-aea4-23b4c4742b12"
+    ],
+    [
+      "empty_basket_error",
+      "The basket for trip 1b06bfb7-049a-4733-aa7c-19a0daac0448 is empty"
+    ]
+  ]
+}
+`
+
+### Get Booking Confirmation (PDF Document)
+
+The following GET request can be made to fetch a PDF confirmation of the booking. This can be sent to the customer or displayed on your website for the customer to view or download.
+
+> 📘
+> 
+> Get Request
+
+The response from this endpoint is a PDF Booking Confirmation Document which will outline the status of booking as well as the confirmed and purchased ancillaries that have been successfully attached to the Passengers' ticket. See below for example:
+
+![2880](/images/bad52f3-booking_confirmation.png "booking_confirmation.png") 
+
+### Get Session Status
+
+To fetch the complete status information of any particular White Label Session, you may make a GET request to the following endpoint:
+
+> 📘
+> 
+> GET REQUEST
+> 
+> `https://whitelabel.gordiansoftware.com/post-booking-session/status/{{encoded_session_id}}`
+
+The response from this endpoint will include the full trip data including the ancillaries that have already been fulfilled and attached to the trip and the items that the passenger has currently has selected and placed into their basket. It also includes information on the payment status, whether the payment has been initiated by the customer, or has been successfully captured as well as the exact breakdown on the amount paid and the stripe fee incurred. See below for an example response that can be expected.
+
+`{
+    "payment": {
+        "payment_method": "card",
+        "status": "succeeded",
+        "stripe_fees": [
+            {
+                "amount": 88,
+                "application": null,
+                "currency": "usd",
+                "description": "Stripe processing fees",
+                "type": "stripe_fee"
+            }
+        ],
+        "total_amount_captured": {
+            "amount": 1998,
+            "amount_after_fee": 1910,
+            "currency": "usd",
+            "exchange_rate": null
+        },
+        "total_amount_captured_original_currency": {
+            "amount": 1998,
+            "currency": "usd"
+        }
+    },
+    "trip": {
+        "basket": {
+            "4e76ba5b-5e95-4c93-8a05-bc9432c55dbb": {
+                "basket_item_id": "4e76ba5b-5e95-4c93-8a05-bc9432c55dbb",
+                "benefits": [],
+                "display_name": "Seat: 9B, LH 1174",
+                "events": [],
+                "passenger_id": "ce403748-100a-4972-96af-e98b498bd46f",
+                "price": {
+                    "base": {
+                        "amount": 1998,
+                        "currency": "USD",
+                        "decimal_places": 2,
+                        "in_original_currency": {
+                            "amount": 1998,
+                            "currency": "USD",
+                            "decimal_places": 2
+                        },
+                        "in_settlement_currency": {
+                            "amount": 1998,
+                            "currency": "USD",
+                            "decimal_places": 2
+                        }
+                    },
+                    "fees": [],
+                    "markups": [
+                        {
+                            "amount": 0,
+                            "currency": "USD",
+                            "decimal_places": 2,
+                            "in_original_currency": {
+                                "amount": 0,
+                                "currency": "USD",
+                                "decimal_places": 2
+                            },
+                            "in_settlement_currency": {
+                                "amount": 0,
+                                "currency": "USD",
+                                "decimal_places": 2
+                            },
+                            "markup_type": "markup"
+                        }
+                    ],
+                    "taxes": [],
+                    "total": {
+                        "amount": 1998,
+                        "currency": "USD",
+                        "decimal_places": 2,
+                        "in_original_currency": {
+                            "amount": 1998,
+                            "currency": "USD",
+                            "decimal_places": 2
+                        },
+                        "in_settlement_currency": {
+                            "amount": 1998,
+                            "currency": "USD",
+                            "decimal_places": 2
+                        }
+                    }
+                },
+                "product_details": {
+                    "column": "B",
+                    "passenger_id": "ce403748-100a-4972-96af-e98b498bd46f",
+                    "row": 9,
+                    "segment_id": "02417925-51a3-41e0-8ec3-2ecdb9072a50"
+                },
+                "product_id": "de043428-cb42-4f39-a3fb-9f1bf5629269",
+                "product_type": "seat",
+                "quantity": 1,
+                "status": "in_basket",
+                "ticket_id": "0716f7da-85ce-4bdf-b1c3-9c2f3dccb3f3",
+                "validity": {
+                    "status": "valid",
+                    "valid_from": "2022-08-30T23:12:28+00:00",
+                    "valid_until": "2022-08-30T23:42:08+00:00"
+                }
+            }
+        },
+        "contact_details": {
+            "address": {
+                "city": "EDI",
+                "country": "GB",
+                "postal_code": "EH1 1AB",
+                "street_address_1": "Flat 12/3",
+                "street_address_2": "1234 James Road"
+            },
+            "contact_details_type": "non_passenger",
+            "date_of_birth": "1982-06-30",
+            "email": "[[email protected]](/cdn-cgi/l/email-protection)",
+            "first_names": "John",
+            "phone_number": "441234567890",
+            "surname": "Doe"
+        },
+        "journeys": [
+            {
+                "journey_id": "9b833dde-72b7-4e9a-b825-ce6895ffeceb",
+                "segments": [
+                    {
+                        "arrival_airport": "ALC",
+                        "arrival_time": "2022-10-15T17:15:00+02:00",
+                        "departure_airport": "FRA",
+                        "departure_time": "2022-10-15T14:40:00+02:00",
+                        "fare_basis": "HTOYDE",
+                        "fare_class": "Y",
+                        "fare_family": "Economy Class",
+                        "marketing_airline": "LH",
+                        "marketing_flight_number": "1174",
+                        "number_of_stops": 0,
+                        "operating_airline": "LH",
+                        "operating_flight_number": "1174",
+                        "segment_id": "02417925-51a3-41e0-8ec3-2ecdb9072a50"
+                    }
+                ]
+            }
+        ],
+        "last_action": {
+            "action": "add_to_basket",
+            "action_id": "eb6646f1-4a79-4754-a81a-cd6b310db90a",
+            "datetime": "2022-08-30T23:12:28+00:00",
+            "details": {},
+            "errors": [],
+            "events": [
+                {
+                    "action_id": "eb6646f1-4a79-4754-a81a-cd6b310db90a",
+                    "event": "add_to_basket_start",
+                    "event_id": "2f0782e7-4cb1-4f83-9f15-44a5d8383933",
+                    "sequence": 1,
+                    "status": "start",
+                    "timestamp": "2022-08-30T23:12:28+00:00"
+                }
+            ],
+            "last_event": {
+                "action_id": "eb6646f1-4a79-4754-a81a-cd6b310db90a",
+                "event": "add_to_basket_start",
+                "event_id": "2f0782e7-4cb1-4f83-9f15-44a5d8383933",
+                "sequence": 1,
+                "status": "start",
+                "timestamp": "2022-08-30T23:12:28+00:00"
+            },
+            "status": "start",
+            "warnings": []
+        },
+        "orders": {},
+        "passengers": [
+            {
+                "first_names": "John",
+                "loyalty_programs": [
+                    {
+                        "airline_id": "IB",
+                        "number": "1234567890",
+                        "program_name": "iberia_plus"
+                    }
+                ],
+                "metadata": {
+                    "partner_passenger_id": "123456"
+                },
+                "passenger_id": "ce403748-100a-4972-96af-e98b498bd46f",
+                "surname": "Doe",
+                "type": "adult"
+            }
+        ],
+        "refresh_token": ...,
+        "tickets": [
+            {
+                "access_details": {
+                    "record_locator": "F6607873"
+                },
+                "basket_item_id": "0020935b-ba80-4c78-ab1f-f5e86a43eaf2",
+                "basket_item_ids": [
+                    "4e76ba5b-5e95-4c93-8a05-bc9432c55dbb"
+                ],
+                "events": [],
+                "journey_ids": [
+                    "9b833dde-72b7-4e9a-b825-ce6895ffeceb"
+                ],
+                "status": "offered",
+                "ticket_id": "0716f7da-85ce-4bdf-b1c3-9c2f3dccb3f3"
+            }
+        ],
+        "trip_access_token": ...,
+        "trip_state_hash": ...
+    }
+}
+`

@@ -1,0 +1,60 @@
+---
+title: "API Basics"
+---
+
+> 📘
+> 
+> The Gordian API follows one flow, regardless of product and integration type. This means one integration unlocks all the Gordian products.
+
+### Common Terminology
+
+| **Term**       | **Definition**                                                                                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| _Trip_         | Represents the entire itinerary, passenger set, and product set that a customer has.                                                                         |
+| _Basket_       | A set of products that have been selected but not yet purchased by the customer. Gordian keeps its own state of the basket to know what the customer picked. |
+| _Journey_      | A single length of a ticket's travel, made up of one or more segments. A one-way trip has a journey, and round trip has two journeys.                        |
+| _Segment_      | A portion of a journey, from a boarding point to a deplaning point of the given flight.                                                                      |
+| _In-funnel_    | Position of ancillary offer during the customer journey, before the payment has been made and the flight has been ticketed                                   |
+| _Post-booking_ | Position of ancillary offer after the flight booking has been made. For example, payment confirmation page, Manage My Booking, etc.                          |
+| _Airline PNR_  | Passenger Name Record (PNR) of the Airline, not the GDS or aggregator                                                                                        |
+
+---
+
+### API Flow
+
+#### 1\. Create a trip
+
+> 📘
+> 
+> The first step of a customer journey is to create a [trip](/reference.html#tag/Trip). The Trip is the main entity that helps you keep track of all the information needed to modify the reservation in any way.
+
+When creating a trip, you receive a `trip_id` which is the trip identifier to use for the rest of the customer journey.
+
+---
+
+#### 2\. Build a trip
+
+Once you’ve created a trip and received the `trip_id`, you can enable the customer to build the trip according to their needs. To build a trip, the customers follow these steps:
+
+1. Search for flights or ancillaries
+2. Add products to the Basket
+3. Verify the basket items
+
+Customers can go back and redo the steps freely to build the trip as they need.
+
+---
+
+#### 3\. Fulfill a trip
+
+When the customer approves the items in the basket, you can start the fulfillment process.Fulfilling a trip is a 2-step process:
+
+1. Initiate the fulfillment process.
+2. Check fulfillment status.
+
+---
+
+#### 4\. Service a trip (post-sale)
+
+Gordian supports post sale changes and cancellations to products booked through Gordian. 
+
+---

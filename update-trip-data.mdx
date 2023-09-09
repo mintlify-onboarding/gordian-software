@@ -1,0 +1,194 @@
+---
+title: "Update Trip Data"
+---
+
+To update the details of the trip before fulfillment of ancillary purchase, a post request to the following endpoint:
+
+> 📘
+> 
+> Post Request
+> 
+> [https://whitelabel.gordiansoftware.com/post-booking-session/update/{{encoded-session-id}}](https://whitelabel.gordiansoftware.com/post-booking-session/update/%7B%7Bencoded-session-id%7D%7D)
+
+Developers need not only send the data that has been changed. They can simply send the entire trip object with the updated data. A successful update will return the updated trip object(as it is saved in our database) back as response.
+
+> ❗️
+> 
+> Updates to the passenger information, contact details as well as itinerary information is supported. However, changes to the itinerary data is not supported if the passenger has already selected seats regardless of whether it has been fulfilled. For all information, updates can be made to them up until the fulfillment request is made.
+
+### Authentication
+
+> 📘
+> 
+> Authentication uses Basic Auth Format with the provided API key as username and an empty password
+
+We will initially provide a sandbox API key for you to be able to test our endpoints. When using this sandbox API key, entire End-to-End fulfillment tests can be performed without actual fulfillment of ancillaries. Production API key will only be given after successful integration of whitelabel.
+
+### URL Params
+
+`/post-booking-session/update/{{encoded-session-id}}`
+
+The Encoded session-id obtained during session creation needs to be provided in the URL. This enables whitelabel to determine which particular session and trip is being updated
+
+> ❗️
+> 
+> We expect the session\_id to be encoded in the url safe base64 encoding scheme when making subsequent requests to other endpoints where the session\_id is required. An error will be thrown otherwise.
+
+### Request Body
+
+we require the following information to be present in the request body under indicated keys:
+
+1. `trip` : The details of the trip and the passengers with the updated data `required`
+
+For more details on the format of the trip object, see the documentation for the session creation endpoint [here](/docs/create-session)
+
+#### Sample Request Body:
+
+`{
+    "trip": {
+        "search": {
+            "seat": {
+                "search": true,
+                "markup": {
+                    "amount": 0,
+                    "decimal_places": 2,
+                    "currency": "SGD"
+                }
+            }
+        },
+        "language": "en-US",
+        "currency": "SGD",
+        "country": "DE",
+        "contact_details":{
+            "contact_details_type": "passenger",
+            "passenger_id": "154",
+            "email": "[[email protected]](/cdn-cgi/l/email-protection)",
+            "phone_number": "441234567890",
+            "address":{
+                "city": "EDI",
+                "country": "GB",
+                "postal_code": "EH1 1AB",
+                "street_address_1": "Flat 12/3",
+                "street_address_2": "1234 James Road"
+                }
+        },
+        "tickets": [
+            {
+                "status": "offered",
+                "journeys": [
+                    {
+                        "segments": [
+                            {
+                                "arrival_airport": "HAJ",
+                                "arrival_time": "2022-09-09T01:55:00",
+                                "departure_airport": "PMI",
+                                "departure_time": "2022-09-08T23:20:00",
+                                "fare_basis": "Q",
+                                "fare_class": "Y",
+                                "fare_family": "Economy Class",
+                                "marketing_airline": "EWG",
+                                "marketing_flight_number": "6850"
+                            }
+                        ]
+                    }
+                ],
+                "metadata": {
+                    "your-id": "your-key"
+                }
+            }
+        ],
+        "passengers": [
+            {
+                "passenger_id": "144",
+                "passenger_type": "adult",
+                "date_of_birth": "2000-01-01",
+                "first_names": "Vincent Willem",
+                "surname": "Van Gogh"
+            },
+            {
+                "passenger_id": "154",
+                "passenger_type": "adult",
+                "date_of_birth": "2000-01-01",
+                "first_names": "Jackie Willem",
+                "surname": "Stewart"
+            }
+        ],
+        "access_details": {
+            "record_locator": "F6607873"
+        }
+    }
+}
+`
+
+### Sample Response Body:
+
+The response that can be expected will look something like the following:
+
+`{
+    "trip": {
+        "basket": {},
+        "journeys": [
+            {
+                "journey_id": "755dd47a-be07-4c85-a82f-3b15be5b97f5",
+                "segments": [
+                    {
+                        "arrival_airport": "FRA",
+                        "arrival_time": "2022-08-30T09:00:00-04:00",
+                        "departure_airport": "BLR",
+                        "departure_time": "2022-08-30T03:05:00-04:00",
+                        "fare_basis": null,
+                        "fare_class": "Q",
+                        "fare_family": "EXAMPLE",
+                        "marketing_airline": "LH",
+                        "marketing_flight_number": "755",
+                        "number_of_stops": 0,
+                        "operating_airline": "LH",
+                        "operating_flight_number": "755",
+                        "segment_id": "45055147-352f-4642-afa5-a4959d396d8b"
+                    }
+                ]
+            }
+        ],
+        "last_action": {},
+        "orders": {},
+        "passengers": [
+            {
+                "date_of_birth": "2000-01-01",
+                "first_names": "Vincent Willem",
+                "metadata": {
+                    "partner_passenger_id": "144"
+                },
+                "passenger_id": "6278bd5d-968d-4009-aeb3-b0eea37452c7",
+                "surname": "Van Gogh",
+                "type": "adult"
+            },
+            {
+                "date_of_birth": "2000-01-01",
+                "first_names": "Jackie Willem",
+                "metadata": {
+                    "partner_passenger_id": "154"
+                },
+                "passenger_id": "ad250756-4f17-438c-ad4d-265259ac3633",
+                "surname": "Stewart",
+                "type": "adult"
+            }
+        ],
+        "refresh_token": "ZXlKaGJHY2lPaUpTVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5Sm9YM1FpT2lJa2NHSnJaR1l5TFhOb1lUSTFOaVF5T1RBd01DUWtZV2RaWkUxbmJIcENWbEV2ZFdkbmFUZG9aRU5uVG0xYVlYSkZPVFpSYUVoT016UlpWMGd1T0RSSVp5SXNJblpoYkdsa1gzVnVkR2xzSWpvaU1qQXlNaTB3TnkweE5WUXhNRG8xTkRveE55NHlNekEyTmpWYUluMC5xbGx3Z2VkMVhscHN5QXIyTlZKOU9HOU95WHpWa2pKY3ZlcFVjcUV5SURuV3lhOU5VbWJqR1BEZExwSDNRNHBMbGIxTVdzdEtuYUxVWmdJMjh6QXp6Sm9UOU9TNUlnRGprcjdvbWZKUUNmd1NQbmlwWDQ1MnNfVk9MYW9zcWltX3Btc3pBM2lscWtWdS1ESTZqeV9kTjgxc3hqd19GenJUNnBXQUptd1pBbEVpdnpmVm9jYS10SFBWSFBOeTByNFR3QTlPOFkzS25JSWtJRE4wUUR3Um5KMGg1WWtibU95bE1PMm9XVDZJUUlqMjdoM25fN0x5VE9pM1BUSW5mZkV3SG9YRjhNb3JvYUtwcUFRS1RfOEZjSU1MbXFUVHVMbTh0bDNHNlhZMUhXYVdfN2NPc3VNTXBXVUpjRzh4N2lTcEttcV9aMnVIU1dneFBxSzB6TWp3V0E=",
+        "tickets": [
+            {
+                "basket_item_id": "6c2f0763-81ab-49b1-929c-7a2e527ecb1e",
+                "basket_item_ids": [],
+                "events": [],
+                "journey_ids": [
+                    "755dd47a-be07-4c85-a82f-3b15be5b97f5"
+                ],
+                "status": "offered",
+                "ticket_id": "496ebd12-a4c1-4405-b574-221a2732f094"
+            }
+        ],
+        "trip_access_token": "ZXlKaGJHY2lPaUpTVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjBjbDlwWkNJNklqVXlOelEyT1RBMkxUVmtaR0V0Tkdaak1DMDRNR0UxTFdFeVlqbGxNRGt3Wm1VM05pSXNJbWx1WDJsa0lqb2lOREEwWm1NMlpUY3RZbVV5WmkwME9XVm1MVGd5Wm1NdE5qbG1ORGRtWldGak9XVTBJaXdpZG1Gc2FXUmZkVzUwYVd3aU9pSXlNREl5TFRBMkxUTXdWREV3T2pVME9qRTNMakU0TlRVMk4xb2lmUS5iZjBaYkVIRmdTZFJaenpvaS1SZ0VqeW15cnMtd1RaUnlSNzczU2Iza0pKc0xXdzNVNW9PQ3dNTmpmMVJHMzVwbzFaWElPcFJ6UXpGQWs3Z1RqWGhnQ0NIa0hwN2dPM1dTUTluS2x4WU93S2hTNF92dGF6aWxyaVJuT1plMG55bUdpOE1DQ3JmYXlhWXBZYW1KWXRteEhRUm9tczlsSlpBNDJTVkRMWE4yWGoydmZTcjZfdy1EVFJjVFF5blZOODhPNElZLVFFR25WZlNuMVozeS1RTExKQ2RoSm9MQmhFNndSeUlpNHhjVWhGck1KQ25GMHUweE84R05QR1NkWk5lMDhWdEdRZUk2a2hnb0xiX1B2V3Z4dkRnTVZGU0ZuUUU4eG9Qcld5NFBzUUpUQ1NHX2poNzdoNzlhMEpzWFpKWURFV25QS1BqV0NqbEJkbDJ5ZFVub3c=",
+        "trip_id": "52746906-5dda-4fc0-80a5-a2b9e090fe76",
+        "trip_state_hash": "66967c3c8be87735db13483ffcf1634b42ed82f19718e488c07e01322ef6d23b"
+    }
+}
+`

@@ -1,0 +1,223 @@
+---
+title: "Create Session"
+---
+
+Interaction with White Label starts with creating a session. This session and its accompanying session-id will encapsulate all information crucial for booking ancillaries for a particular trip. However if you already have a Gordian Trip created and have an accompanying trip\_id for the corresponding trip for which you wish to add ancillaries post-booking with White Label, go to this page where we outline a [simpler method to get started with White Label](/docs/creating%5Fsession%5Ffrom%5Ftrip).
+
+To create a session, a post request is to be made to the following endpoint:
+
+> 📘
+> 
+> Post Request
+> 
+> [https://whitelabel.gordiansoftware.com/post-booking-session](https://whitelabel.gordiansoftware.com/post-booking-session)
+
+### Authentication
+
+> 📘
+> 
+> Authentication uses Basic Auth Format with the provided API key as username and an empty password
+
+We will initially provide a sandbox API key for you to be able to test our endpoints. When using this sandbox API key, entire End-to-End fulfillment tests can be performed without actual fulfillment of ancillaries. Production API key will only be given after successful integration of White Label. Check the following [Integration Protocol documentation](https://www.notion.so/Integration-Protocol-da99ac74755c4b96ac6c4dcb5e0e9d0b) for more information: 
+
+### URL Params
+
+`/post-booking-session`
+
+There are no URL params expected for this endpoint
+
+### Request Body
+
+We require the following information to be present in the request body under the indicated keys:
+
+1. `trip` : The details of the trip and the passengers `required`
+2. `partner_url_id` : The Partner\_url\_id that helps us identify where this request is coming from `required`
+3. `booking_id` : An unique id that can help you differentiate between the different bookings you manage `optional`
+
+> 📘
+> 
+> Booking\_id
+> 
+> If provided, the resultant session\_id is a function of the partner\_id that we provide you and the booking\_id (See below for more information). This saves you the hassle of having to manage another session\_id in your databases.
+
+#### Trip
+
+The trip object provided needs to contain the fields indicated in the following subsections. The body of the trip object mimics the request body of the create trip endpoint of Gordian's Core API. As such, refer to the following [documentation](/reference/create%5Ftrip) for more details on how the trip object should look like.
+
+#### Search
+
+This field would trigger the search query for the ancillary that is specified. In the following example, seat search is enabled.
+
+`	  "search": {
+          "seat": {
+              "search": true
+          }
+      },
+`
+
+#### Contact details
+
+We would also need the contact details of one of the passengers (presumably it's the person booking the trip) included in the trip object for fulfillment. Provide us with the following details under the “contact\_details” field inside the trip object.
+
+`"contact_details":{
+    "contact_details_type":"passenger",
+    "passenger_id":"a0dc4b56-0469-4a3d-8bf6-5fc1645ca840",
+    "email":"[[email protected]](/cdn-cgi/l/email-protection)",
+    "phone_number":"441234567890",
+    "address":{
+        "city":"EDI",
+        "country":"GB",
+        "postal_code":"EH1 1AB",
+        "street_address_1":"Flat 12/3",
+        "street_address_2":"1234 James Road"
+    }
+},
+
+`
+
+#### Tickets
+
+The tickets field will contain the information about the itinerary itself. Refer to the sample request body included below for more information on how the tickets field should be formatted.
+
+### Sample Request Body
+
+JavaScript
+
+`    {
+	"trip": {
+		// To see how to format Trip Objects, refer to our docs here: https://docs.gordiansoftware.com/reference.html#tag/Trip
+	  "search": {
+          "seat": {
+              "search": true
+          }
+      },
+	  "language": "en-US",
+	  "currency": "USD",
+	  "country": "US",
+	  "tickets": [
+	    {
+	      "status": "offered",
+	      "offered_price": {
+	        "currency": "USD",
+	        "decimal_places": 2,
+	        "base_price": 7000,
+	        "markup": 0,
+	        "total": 700
+	      },
+	      "journeys": [
+	        {
+	          "segments": [
+	            {
+	              "arrival_airport": "LAS",
+	              "arrival_time": "2020-07-05T15:54:00-08:00",
+	              "departure_airport": "PDX",
+	              "departure_time": "2020-07-04T13:38:00-08:00",
+	              "fare_basis": "LKX9C3B4",
+	              "fare_class": "L",
+	              "fare_family": "ECONOMY_BASIC",
+	              "marketing_airline": "NK",
+	              "marketing_flight_number": "671"
+	            }
+	          ]
+	        },
+	        {
+	          "segments": [
+	            {
+	              "arrival_airport": "PDX",
+	              "arrival_time": "2020-07-10T12:52:00-08:00",
+	              "departure_airport": "LAS",
+	              "departure_time": "2020-07-10T10:39:00-08:00",
+	              "fare_basis": "LKX9C3B4",
+	              "fare_class": "L",
+	              "fare_family": "ECONOMY_BASIC",
+	              "marketing_airline": "NK",
+	              "marketing_flight_number": "765",
+	              "operating_airline": "NK",
+	              "operating_flight_number": "765"
+	            }
+	          ]
+	        }
+	      ],
+	      "metadata": {
+	        "your-id": "your-key"
+	      }
+          "access_details":{
+            "record_locator":"<The carrier record locator of the trip>",
+            "ticket_number":"<airline issued ticket number>",
+            "ticketing_channel":{
+                "record_locator":"<record locator needed to access booking in ticketing channel>",
+                "name":"<'sabre' or 'travelport' or 'amadeus' or 'ndc' or 'flx'>"
+            }
+          }
+
+	    }
+	  ],
+	  "passengers": [
+	    {
+            "passenger_id":"abc1231d-e5d3-4f91-878f-db211469365f",
+            "first_names":"Daniel",
+            "surname":"Smith",
+            "date_of_birth":"1998-05-01",
+            "passenger_type":"adult"
+	    },
+	    {
+            "passenger_id":"xyz1231d-e5d3-4f91-878f-db211469365f",
+            "first_names":"John",
+            "surname":"Doe",
+            "date_of_birth":"1992-05-01",
+            "passenger_type":"adult"
+	    }
+	  ]
+	},
+    "contact_details":{
+        "contact_details_type":"passenger",
+        "passenger_id":"abc1231d-e5d3-4f91-878f-db211469365f",
+        "email":"[[email protected]](/cdn-cgi/l/email-protection)",
+        "phone_number":"441234567890",
+        "address":{
+            "city":"EDI",
+            "country":"GB",
+            "postal_code":"EH1 1AB",
+            "street_address_1":"Flat 12/3",
+            "street_address_2":"1234 James Road"
+        }
+    },
+	"partner_url_id": "b5b978d7-19ab-4638-b596-f5cef08a1433", 
+	"booking_id": "123456789ff1"
+	
+}
+`
+
+### Sample Response:
+
+If done correctly, calling this endpoint will return the following data:
+
+`{
+	"url": "https://gordian-ancillaries-white-label.netlify.app/ancillaries/<BASE64_encoded_session_id>"
+}
+`
+
+The `BASE64_encoded_session_id` appended to the back of the base URL can be decoded to obtain the session id corresponding to the particular trip in question.  
+Below we have the python code example to specify how to do that.
+
+`import base64
+
+def base64_decode(data: str):
+    return base64.urlsafe_b64decode(bytes(data, "utf-8")).decode("utf-8")
+`
+
+The decoded session\_id will then take on the following form:
+
+* if a booking id was provided:  
+   * session_id = {partner\_id}_{booking\_id}
+* if a booking id was not provided:  
+   * session_id = {partner\_id}_{GORDIAN\_UUID}
+
+As an example, if the `partner_id` we provided you with is : `a77da86a-d70e-42a2-83b8-2358f4d7e1c3`  
+and you provided us with a booking\_id of `12345678`, the resultant session\_id is `a77da86a-d70e-42a2-83b8-2358f4d7e1c3_12345678`
+
+> ❗️
+> 
+> Encoded url\_safe encoded session\_id
+> 
+> We expect the session\_id to be encoded in the url safe base64 encoding scheme when making subsequent requests to other endpoints where the session\_id is required. An error will be thrown otherwise.

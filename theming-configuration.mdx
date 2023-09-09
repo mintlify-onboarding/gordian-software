@@ -1,0 +1,97 @@
+---
+title: "Theming Configuration"
+---
+
+## Theming
+
+Gordian provides a default theme for the seatmap and baggage selection. However, you can configure the theme of those components to match your brand and site.
+
+To do so, pass a `theme` object in when calling `Gordian.showUpsell`:
+
+JavaScript
+
+`Gordian.showUpsell({
+  container: document.getElementById("upsell-container"),
+  display: "card",
+  allowProducts: ["seats"],
+  theme: {
+    textPrimary: '#002244',
+  },
+})
+`
+
+> 📘
+> 
+> While seatmap and baggage selection visualization can be configured through the `theme` parameter, the widget itself uses a default theme. To customize it to fit your brand colors, fonts, and other styling, reach out to your account manager.
+
+### Theme Configuration
+
+You can use the `theme` key to configure and customize visualization of the seatmap and baggage selection. The structure of the `theme` object is as follows:
+
+JavaScript
+
+`{
+  textPrimary: '#120C80', // main text color
+  textSecondary: '#4D4B6D', // secondary text color
+  title: '#120C80', // e.g. the passenger / place names in the drop down
+  primary: '#120C80', // primary button color
+  secondary: '#4D4B6D', // secondary button color
+  buttonBorderRadius: '0.25rem',
+  buttonText: '#000000',
+  alert: '#E06168',
+  seats: { // These represent the colors of the seats depending on the category
+    1: {
+      fill: '#9BC8E4', // the seat fill color
+      stopColor: '#82B4D3', // the gradient stop color for the seat fill
+      labelColor: '#000000', // the label color
+      borderColor: '#FFFFFF' // the border color
+    },
+    2: { //
+      fill: '#8FE9FF',
+      stopColor: '#7AD2E8',
+      labelColor: '#000000',
+      borderColor: '#FFFFFF'
+    },
+    3: {
+      fill: '#FFCE51', // Preferred
+      stopColor: '#E7B73D',
+      labelColor: '#000000',
+      borderColor: '#FFFFFF'
+    },
+    4: { // Standard Seat
+      fill: '#AADB72',
+      stopColor: '#8EBD59',
+      labelColor: '#000000',
+      borderColor: '#FFFFFF'
+    },
+    5: {
+      fill: '#faf18f',
+      stopColor: '#faf18f',
+      labelColor: '#29425b',
+      borderColor: '#FFFFFF'
+    },
+    6: {
+      fill: '#004b94',
+      stopColor: '#004b94',
+      labelColor: '#29425b',
+      borderColor: '#FFFFFF'
+    },
+    not_available: {
+      fill: '#D9D9D9', // color used for the bg of unavailable seats
+      stopColor: '#D9D9D9',
+      labelColor: '#29425b',
+      borderColor: '#FFFFFF'// color used to draw the "X" on unavailable seats
+    },
+    selected_seat: {
+      fill: '#5C54BD',
+      stopColor: '#372F90',
+      labelColor: '#29425b',
+      borderColor: '#FFFFFF'
+    }
+  }
+}
+`
+
+> 📘
+> 
+> It is not necessary to send all the values of the theme. You can send only those that you would like to change - the rest will extend from the base theme.

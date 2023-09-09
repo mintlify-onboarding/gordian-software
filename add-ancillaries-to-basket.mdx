@@ -1,0 +1,32 @@
+---
+title: "Add Ancillaries to Basket"
+---
+
+#### Add to Basket
+
+To check an ancillary and prepare it for purchase, put it in the basket. You have multiple ways to add ancillaries to the basket:
+
+* [Add new products to the basket](/reference/add%5Fto%5Fbasket).
+* [Replace the basket items with a new set of products](/reference/update%5Fbasket).
+* [Replace the basket items of a certain product type with a new set of products](/reference/update%5Fbasket%5Ffor%5Fproduct%5Ftype).
+* [Replace the basket items of a certain passenger with a new set of products](/reference/update%5Fbasket%5Ffor%5Fproduct%5Ftype%5Fpassenger).
+
+Once an ancillary is in the basket, it has a validity tag that may be one of the following values:
+
+* `checking`: Gordian is checking the ancillary. Continue to [poll the basket information](/reference/get%5Fbasket) for an updated state.
+* `valid`: Gordian holds the ancillary to ensure it is available for your customer.
+* `price_changed`: There has been a price change since the last time it was checked.
+* `needs_check`: The date in `valid_until` has passed and the ancillary needs a check.
+* `unavailable`: The ancillary is no longer available.
+
+---
+
+#### Validate Basket
+
+Review the contents of the basket by [polling the basket contents](/reference/get%5Fbasket).
+
+---
+
+At this point the user should complete the checkout flow on your website, you should charge the user for the ancillary and the ticket. 
+
+---

@@ -1,0 +1,33 @@
+---
+title: "Create Trip and Search"
+---
+
+### Step 1: Create a trip with Gordian
+
+All ancillary searches are linked to a `trip`, which represents a user’s trip. 
+
+> 📘
+> 
+> This assumes you have received your api key. If you haven't please consult the [getting started guide](/authentication/)
+
+To create a trip and search for ancillaries, from your backend server, use the `https://api.gordiansoftware.com/v2.2/trip` endpoint with your `api_key`. More details below:
+
+> 📘
+> 
+> This combines the [create a trip](/reference/create%5Ftrip) and [start a search request](/reference/create%5Fsearch) steps by using in the Gordian system and the [create trip call](/reference/create%5Ftrip) by using the `search` object in the [create trip call](/reference/create%5Ftrip).
+
+ Use the markup field if you would like to set the markup. Gordian is able to configure the markup for you if you prefer. 
+
+> 📘
+> 
+> `Fare class`, `fare basis`, and `fare family` allow Gordian to retrieve the most accurate pricing and availability. Gordian _strongly recommends_ you provide them. If, however, you can't for any reason, you can input`null` to retrieve results.
+
+---
+
+### Step 2: Poll the Search Results
+
+[Poll the search results](/reference/search) endpoint until you get ancillaries options.
+
+The search results contain a complete list of the benefits, including a representation of the seat map so you can present all the prices to the customer.
+
+---

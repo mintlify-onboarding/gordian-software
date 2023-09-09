@@ -1,0 +1,38 @@
+---
+title: "Seats with Gordian Widget"
+---
+
+#### Unleash the full potential of travel by integrating Gordian's seatmap widget!
+
+Here you will find all the essential steps as well as the necessary code references to quickly and easily turbocharge your booking funnel.
+
+> 📘
+> 
+> One of our partners recently saw an **increase in conversion rate of 41%** by implementing our seat map! The best part? Gordian is constantly A/B testing our seat map and building upon feedback from our partners. We seek to maximize conversion rates and free up valuable engineering time for our partners.
+
+![Gordian Seat Widget](/images/200596783-9b932abc-c331-4e40-a12c-0b8839a7a9fe.png) 
+
+---
+
+### Starting Tips
+
+* You will need a Gordian `api_key` to follow along this guide. If you do not have one, please contact your Gordian Account Manager. If you do not have a Gordian Account Manager, please email [\[email protected\]](/cdn-cgi/l/email-protection#562637242238332416313924323f373825393022213724337835393b) to quickly request a demo to get started.
+* The Gordian API uses [HTTP Basic Auth header](https://en.wikipedia.org/wiki/Basic%5Faccess%5Fauthentication#Client%5Fside) with your API key as the username and a blank password (this means you do not need a password). You must use [HTTPS as the transport protocol](https://www.cloudflare.com/learning/ssl/what-is-https/).  
+ Most request libraries have the ability to send requests with basic auth. For example, curl uses the _`curl -u 'username:password'`_ flag.
+* Follow along the implementation with on our online sandbox:  
+🌐 \[[https://codesandbox.io/p/github/gordiansoftware/dynamic\_upsell\_integration](https://codesandbox.io/p/github/gordiansoftware/dynamic%5Fupsell%5Fintegration))
+* When setting up the booking flow and returning flights, we recommend using **Spirit Airlines**.
+* For all API calls we provide examples but you can also reference them in our [Postman Collection](https://documenter.getpostman.com/view/24187796/2s8YY9w7ND).
+
+---
+
+#### Steps for offering seats through the Gordian Widget
+
+* [Configure the seat booking flow](/docs/seat-widget-configuration)
+* [Receive callbacks for the status of the seats](/docs/receive-callbacks-1)
+* [Support changes and cancellations of the seats](/docs/ancillary-servicing)
+* [Set up Partner Portal, invoicing, credential bridging](/docs/partner-portal-invoicing-credential-bridging)
+* [Test the integration](/docs/test-the-integration)
+* [ Launch with Gordian](/docs/launch)
+
+---

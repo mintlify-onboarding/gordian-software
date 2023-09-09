@@ -1,0 +1,370 @@
+---
+title: "Flights Tutorial"
+---
+
+## Flights
+
+Use the Gordian API to enable a full customer journey that includes the following:
+
+1. [Search for flights](#search-for-flights)  
+   * [Search for fare options](#search-for-options)
+2. [Add products to the basket](#add-products-to-the-basket)  
+   * [Add ancillaries](#add-ancillaries)
+3. [Confirm passenger details](#confirm-passenger-details)
+4. [Book a flight](#book-a-flight)
+
+Additionally, you can enable the customer to do the following actions :
+
+* [Hold a ticket](#hold-a-ticket-optional)
+* [Change a booking](#change-a-booking)
+* [Check a booking](#check-a-booking)
+* [Cancel a booking](#cancel-a-booking)
+
+> ❗️
+> 
+> This tutorial assumes that you already have your [API key and authentication method](/docs/authentication) to use the Gordian API. For more information, see the [getting started guide](/docs/getting-started).
+
+---
+
+### Flight Booking Flow
+
+Please see the below chart, which outlines the flight booking flow from search to fulfillment.  
+![V2 Booking Flow](/images/v2-booking-flow.png "V2 Booking Flow")
+
+---
+
+### Search for flights
+
+The first step of the journey is when the customer wants to search for flight options. To search for flights:
+
+1. [Create a trip](/reference/create%5Ftrip) in the Gordian system.
+2. [Start a search request](/reference/create%5Fsearch) with the origin and destination.
+
+> 📘
+> 
+> Do steps 1 and 2 at the same time by using the `search` object in the [create trip call](/reference/create%5Ftrip).
+
+1. [Poll the search results](/reference/search) endpoint until you get ticket options. The search results include a complete list of the benefits of each of the fares, including cancellation, modifications, and included baggage.
+
+#### Search for options
+
+A search for all results has the cheapest few fares for each itinerary. To get more results for a specific date, place, or flight, add search parameters in the `journeys` object. The more specific the values are, the higher the priority in the search. For example, see the following JSON object for starting a search request:
+
+JSON
+
+`{
+  "ticket": {
+    "search": true,
+    "cabin_class": "economy",
+    "detailed_results": 1,
+    "group_by": "itinerary",
+    "journeys": [
+      {
+        "arrival_city": "LON",
+        "arrival_date": "2020-07-07",
+        "departure_airport": "EDI",
+        "departure_date": "2020-07-07",
+        "segments": [
+          {
+            "flight_number": "1523",
+            "marketing_airline": "WN"
+          },
+          {
+            "flight_number": "125",
+            "marketing_airline": "WN"
+          }
+        ]
+      },
+      {
+        "arrival_airport": "EDI",
+        "arrival_time": "2020-04-24T10:10:00+00:00",
+        "departure_airport": "LGW",
+        "departure_date": "2020-07-14",
+        "segments": [
+          {
+            "flight_number": "205",
+            "marketing_airline": "WN"
+          },
+          {
+            "flight_number": "1620",
+            "marketing_airline": "WN"
+          }
+        ]
+      }
+    ],
+    "order_by": "price"
+  }
+}
+`
+
+The `segments` objects define specific flight numbers of interest to the customer. In this case, the `flight_number ` value has a higher priority in the search process than the rest of the parameters.
+
+---
+
+### Add products to the basket
+
+To provide accurate prices to your customer, make sure to add the tickets to the Gordian basket. You have multiple ways to add tickets:
+
+* [Add new products to the basket](/reference/add%5Fto%5Fbasket).
+* [Replace the basket items with a new set of products](/reference/update%5Fbasket).
+* [Replace the basket items of a certain product type with a new set of products](/reference/update%5Fbasket%5Ffor%5Fproduct%5Ftype).
+* [Replace the basket items of a certain passenger with a new set of products](/reference/update%5Fbasket%5Ffor%5Fproduct%5Ftype%5Fpassenger).
+
+Once a ticket is in the basket, the basket information keeps a validity field for each item, and it may be one of the following values:
+
+* `checking`: Gordian is checking the fare. Continue to [poll the basket information](/reference/get%5Fbasket) endpoint for an updated state.
+* `valid`: Gordian holds the ticket to ensure they are available for your customer.
+* `price_changed`: There has been a price change since the last time it was checked.
+* `needs_check`: The date in `valid_until` has passed and the fare needs a check.
+* `unavailable`: The fare is no longer available.
+
+---
+
+### Check fares
+
+If the customer’s session is open for a long time, or you check the basket items later, the fares may no longer be valid. To verify the fares of products already in the basket:
+
+1. [Start a basket check](/reference/start%5Fbasket%5Fcheck).
+2. [Poll the basket information endpoint](/reference/get%5Fbasket) until you receive the updated state.  
+   * If the new `validity` value is `price_changed`, re-adding the same product to the basket accepts the changed price.  
+   * You should let the customer know if the price is changed which will be charged when fulfilling the basket.
+
+---
+
+### Add Ancillaries
+
+Each ticket has included ancillaries that are part of the search results. To offer the customer the ability to purchase additional ancillaries, follow these steps:
+
+1. [Add the ticket to the basket](#add-products-to-the-basket) to make sure Gordian checks and holds the ticket.
+2. [Start a new search](/reference/create%5Fsearch) selecting search results only for ancillaries.  
+   * You can only search for ancillaries after a ticket is in the basket.
+3. [Get the search results](/reference/search) and present them to the customer.
+4. [Put the selected ancillaries in the basket](#add-products-to-the-basket). This is the same procedure as with flight tickets.
+
+!!! Tip  
+Gordian provides a [Dynamic Upsell widget](/dynamic-upsell-widget/) to easily integrate a UI in your customer journey to offer ancillaries.
+
+> 📘
+> 
+> Gordian provides a [Dynamic Upsell widget](/dynamic-upsell-widget/) to easily integrate a UI in your customer journey to offer ancillaries.
+
+---
+
+### Confirm passenger details
+
+As soon as you have the full information of the passengers, do the following:
+
+1. [Update the trip](/reference/update%5Ftrip) with the information including contact address and date of birth.
+2. Check the response for any changes in the basket to inform the customer. For example, price drops due to loyalty program information.
+
+---
+
+### Hold a ticket (Optional)
+
+For a specific set of airlines (please ask your account manager for an updated list) it is possible to place a ticket on hold for a certain amount of time, in order to do it, follow these steps:
+
+> 🚧
+> 
+> Hold duration
+> 
+> The amount of time that the ticket can be on hold varies by airline, fare type and booking class
+
+1. Review the contents of the basket by [polling the basket information](/reference/get%5Fbasket).
+2. Confirm that all the products in the basket have the status of `valid`.  
+   * If the products have other status values, proceed as follows:  
+| Status value   | Action item                                                                                                 |  
+| -------------- | ----------------------------------------------------------------------------------------------------------- |  
+| checking       | [Poll the basket information](/reference.html#operation/get%5Fbasket) endpoint until the check is complete. |  
+| invalid        | Start a [check of the basket](/reference.html#operation/start%5Fbasket%5Fcheck) to refresh validity.        |  
+| unavailable    | Inform the customer and possibly give them the option to select alternatives.                               |  
+| price\_changed | Inform the customer and possibly give them the option to select alternatives.                               |
+3. Confirm that the customer sees the final price before proceeding.
+4. Send the [hold request](/reference.html#operation/hold).
+5. [Poll the trip information](/reference.html#operation/get%5Ftrip) endpoint until you see the status of the hold.  
+   * Each of the products in the `basket` object has its own status.  
+   * Each of the products in the `basket` has a validity property  
+   * The tickets in the `tickets` object will also have a status `on_hold`  
+   * Example:  
+   JSON  
+   `{  
+       "basket": {  
+           "762831ba-a809-4aaf-ac56-b715a8d94f86": {  
+               "basket_item_id": "762831ba-a809-4aaf-ac56-b715a8d94f86",  
+               "benefits": [...],  
+               "display_name": "Ticket",  
+               "events": [...],  
+               "price": {...},  
+               "product_details": {...},  
+               "product_id": "f471ae01-0aca-4c8e-b363-94eccd102ad4",  
+               "product_type": "ticket",  
+               "quantity": 1,  
+               "status": "on_hold",  
+               "ticket_id": "f2923070-e416-416c-b7df-ab8d23566857",  
+               "validity": {  
+                   "status": "valid",  
+                   "valid_from": "2022-08-30T16:58:32+00:00",  
+                   "valid_until": "2022-08-31T21:59:39+00:00"  
+               }  
+           }  
+       },  
+       "contact_details": {...},  
+       "journeys": [...],  
+       "last_action": {...},  
+       "metadata": {},  
+       "orders": {},  
+       "passengers": [...],  
+       "refresh_token": ***,  
+       "tickets": [  
+           {  
+               "access_details": {...},  
+               "basket_item_id": "762831ba-a809-4aaf-ac56-b715a8d94f86",  
+               "basket_item_ids": [  
+                   "762831ba-a809-4aaf-ac56-b715a8d94f86"  
+               ],  
+               "events": [],  
+               "journey_ids": [  
+                   "ee39a335-e094-432e-806c-2e3014834091"  
+               ],  
+               "status": "on_hold",  
+               "ticket_id": "f2923070-e416-416c-b7df-ab8d23566857"  
+           }  
+       ],  
+       "trip_access_token": ***,  
+       "trip_state_hash": ***  
+   }  
+   `  
+    In the example above:  
+         * The `validity.valid_from` property indicates when the ticket was put on hold (`"2022-08-30T16:58:32+00:00"`)  
+         * The `validity.valid_until` property indicates the ticketing time limit (`"2022-08-31T21:59:39+00:00"`)
+6. You can book a ticket that's on hold only if it's still within the hold window (see validity above), for that follow the steps in [Book a flight](#book-a-flight)
+
+---
+
+### Book a flight
+
+When the customer is ready to book a flight, follow these steps:
+
+1. Review the contents of the basket by [polling the basket information](/reference.html#operation/get%5Fbasket).
+2. Confirm that all the products in the basket have the status of `valid`.  
+   * If the products have other status values, proceed as follows:  
+| Status value   | Action item                                                                                                 |  
+| -------------- | ----------------------------------------------------------------------------------------------------------- |  
+| checking       | [Poll the basket information](/reference.html#operation/get%5Fbasket) endpoint until the check is complete. |  
+| invalid        | Start a [check of the basket](/reference.html#operation/start%5Fbasket%5Fcheck) to refresh validity.        |  
+| unavailable    | Inform the customer and possibly give them the option to select alternatives.                               |  
+| price\_changed | Inform the customer and possibly give them the option to select alternatives.                               |
+3. Confirm that the customer sees the final price before proceeding.
+4. Charge the customer’s form of payment.  
+   * If the customer is not paying before the `valid_until` date, repeat step 1.
+5. Send the [fulfillment request](/reference.html#operation/fulfill).  
+!!! info "Security note"  
+Include the `trip_state_hash` received from step 1\. The hash represents the state of the trip at that specific moment in time, ensuring that there wasn't any change to the basket between step 1 and 4.  
+!!! info "Tickets on hold"  
+If the ticket to be fulfilled is currently on hold, there's no need to send `contact_details` or `passengers` information as that information was provided during the [hold](#hold-a-ticket-optional)
+6. [Poll the trip information](/reference.html#operation/get%5Ftrip) endpoint until you see the status of the fulfillment.  
+   * Each of the products in the `orders` object has its own status.
+
+!!! Tip  
+[Subscribe to the Fulfillment Completed callback](/reference.html#operation/subscribe) to receive a notification with the final state of the process.
+
+---
+
+### Change a booking
+
+When the customer wants to change a booking, follow these steps:
+
+1. Use the same `trip_id` of the trip which already has tickets booked.
+2. [Check the eligibility](/reference.html#operation/getCapabilities) of the ticket booking in the trip to determine if change is allowed.  
+   * Eligibility per action is broken down by `booking_id`  
+   * Example output:  
+   JSON  
+   `{  
+       "cancel_itinerary": {  
+           "f2923070-e416-416c-b7df-ab8d23566857": {  
+               "available": false  
+           }  
+       },  
+       "change_itinerary": {  
+           "f2923070-e416-416c-b7df-ab8d23566857": {  
+               "available": true,  
+               "conditions": {  
+                   "fees": {  
+                       "currency": "EUR",  
+                       "decimal_places": 2,  
+                       "total": 6000  
+                   }  
+               }  
+           }  
+       }  
+   }  
+   `  
+    In the example above:  
+         * The `available` property indicates whether an action is applicable to the booking or not. In this case, changing the booking is allowed, but cancellation is not.  
+         * The `conditions` property indicates extra information about the post-booking action. In this case, there is a flat fee associated with changing the booking
+3. [Search for ticket change](/reference.html#operation/createChangeSearch) using `booking_id` from eligibility check  
+   * If searching for tickets for a _Date Change_ of the existing itinerary, keep `arrival_airport` and `departure_airport` static in `journeys` and define new `departure_date`.  
+   * If searching for tickets for a _Route Change_ of the existing itinerary, keep `departure_date` static in `journeys` and define new route.  
+   * Example input:  
+   JSON  
+   `{  
+       "ticket": {  
+           "journeys": [  
+               {  
+                   "departure_date": "2023-03-10",  
+                   "departure_airport": "BCN",  
+                   "arrival_airport": "AMS"  
+               },  
+               {  
+                   "departure_date": "2023-03-17",  
+                   "departure_airport": "AMS",  
+                   "arrival_airport": "BCN"  
+               }  
+           ]  
+       }  
+   }  
+   `  
+   * The prices in the search results are the cost of changing, _not the base prices_.
+4. Proceed with [checking](#add-products-to-the-basket) and [booking](#book-a-flight) the alternative ticket offering using the same flow as the initial search.
+
+---
+
+### Check a booking
+
+Airlines may change bookings without necessarily informing the customer. You can start a check of all the items in a booking with the following steps:
+
+1. Use the same `trip_id` of the trip you registered.
+2. [Start a check](/reference/start%5Fbooking%5Fintegrity%5Fcheck) of the trip.
+3. [Poll the trip information](/reference/get%5Ftrip) endpoint until the state is no longer `check_in_progress`.  
+   * Each of the products in the `orders` object has its own status.
+
+> 📘
+> 
+> [Subscribe to the callbacks](/reference/subscribe) to receive a notification with the final state of the checking process.
+
+#### Involuntary changes
+
+If you [subscribed to notifications](/reference/subscribe), you receive a callback in the event of the following involuntary changes:
+
+* `involuntary_change`: there is no action to be taken by the customer. For example, the schedule changed by a small amount.
+* `involuntary_cancellation`: The product has been cancelled and refunded. Each product has its own `refund_amount` property.
+* `customer_action_needed`: the customer must choose an option:  
+   * _Get a refund_. They can proceed through the [cancellation process](#cancel-a-booking).  
+   * _Select an alternative_. The customer must select an alternative from a list. Add the selection to the basket and fulfill. If the booking has ancillaries and there was a change, you receive an `involuntary_change` callback.
+
+---
+
+### Cancel a booking
+
+When the customer wants to cancel a booking, follow these steps:
+
+1. [Start a cancellation check](/reference/start%5Fcancellation%5Fcheck) for every product in the booking.
+2. [Poll cancellation details](/reference/get%5Fcancellation%5Famount) endpoint to get the results of the check. It includes the refund amount for the products and each product that would be cancelled with it, for example, seat or bag selection.
+3. [Confirm cancellation](/reference/cancel). Starts the cancellation with the airline.
+4. [Poll the trip information](/reference/get%5Ftrip) endpoint to see the status of the cancellation.  
+   * Each of the products in the `orders` object has its own status.
+
+> 📘
+> 
+> [Subscribe to the Cancellation Completed callback](/reference/subscribe) to receive a notification with the final state of the process.
+
+---

@@ -1,0 +1,18 @@
+---
+title: "Customer Journey"
+---
+
+![1241](/images/ec2fa1a-customer_journey.png "customer_journey.png")
+
+Customer Journey
+
+More details on each step of the customer journey below:
+
+1. Passenger purchases a ticket from you. Ticket gets issued.
+2. Generate a White Label session by sending a request to the `/post-booking-sesison` endpoint containing the trip and passenger information. For more details on how to create the session please checkout the [tutorial for the 'create session' endpoint here](/docs/create-session). A successful response will contain a personalized URL where the passengers can go to purchase their ancillaries.
+3. With the URL obtained from Step 2, it is now up to you how you want to deliver this URL to your passengers. Be it through email marketing, push notifications or through a URL redirect from your very own website or mobile application is entirely up to you. Our commercial team can provide reference examples and best practices.
+4. With the provided URL, a passenger can proceed to the link and select their ancillaries for their trip.
+5. Payment for the selected ancillaries by the passengers will then be paid for by the passengers themselves through one of the supported payment methods on the White Label site. One important point to note is that you do not have to integrate any of the payment methods. Payment integration has already been done by Gordian on the White Label site.
+6. Payment made by passengers is captured by Gordian's Stripe account.
+7. Once the funds have been transferred correctly, White Label will fulfill the ancillary purchase through Gordian's core API (no implementation required from you). Once fulfillment is completed successfully, White Label will inform you of the successful booking and optionally, the customers directly as well (or you may also choose to inform the passengers yourself).
+8. Your cut of the transaction is paid out on a monthly basis. More details on how to set this up are provided in the [Payment Settlements documentation](/docs/payment-settlements)
