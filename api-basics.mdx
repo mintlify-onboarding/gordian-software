@@ -2,9 +2,9 @@
 title: "API Basics"
 ---
 
-> 📘
-> 
-> The Gordian API follows one flow, regardless of product and integration type. This means one integration unlocks all the Gordian products.
+<Note>
+    The Gordian API follows one flow, regardless of product and integration type. This means one integration unlocks all the Gordian products.
+</Note>
 
 ### Common Terminology
 
@@ -24,13 +24,11 @@ title: "API Basics"
 
 #### 1\. Create a trip
 
-> 📘
-> 
-> The first step of a customer journey is to create a [trip](/reference.html#tag/Trip). The Trip is the main entity that helps you keep track of all the information needed to modify the reservation in any way.
+<Note>
+    The first step of a customer journey is to create a [trip](/reference.html#tag/Trip). The Trip is the main entity that helps you keep track of all the information needed to modify the reservation in any way.
+</Note>
 
 When creating a trip, you receive a `trip_id` which is the trip identifier to use for the rest of the customer journey.
-
----
 
 #### 2\. Build a trip
 
@@ -42,8 +40,6 @@ Once you’ve created a trip and received the `trip_id`, you can enable the cust
 
 Customers can go back and redo the steps freely to build the trip as they need.
 
----
-
 #### 3\. Fulfill a trip
 
 When the customer approves the items in the basket, you can start the fulfillment process.Fulfilling a trip is a 2-step process:
@@ -51,10 +47,6 @@ When the customer approves the items in the basket, you can start the fulfillmen
 1. Initiate the fulfillment process.
 2. Check fulfillment status.
 
----
-
 #### 4\. Service a trip (post-sale)
 
 Gordian supports post sale changes and cancellations to products booked through Gordian. 
-
----

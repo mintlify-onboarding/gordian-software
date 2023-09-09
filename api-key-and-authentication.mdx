@@ -8,11 +8,9 @@ Gordian controls access to airline information and processes through the Gordian
 
 Once you have determined the product and integration you would like to start with, please contact your account manager for your API key. If you do not have an account manager, [request a demo](https://www.gordiansoftware.com/) 
 
-> 📘
-> 
-> Your API key carries many privileges, so be sure to keep it secure! Do not share your API key in publicly accessible areas such as client-side code, GitHub, and so forth.
-
----
+<Note>
+    Your API key carries many privileges, so be sure to keep it secure! Do not share your API key in publicly accessible areas such as client-side code, GitHub, and so forth.
+</Note>
 
 ## Authentication
 
@@ -22,13 +20,12 @@ The Gordian API uses [HTTP Basic Auth header](https://en.wikipedia.org/wiki/Basi
 
 Most request libraries have the ability to send requests with basic auth. For example, curl uses the `curl -u 'username:password'` flag.
 
-> 📘
-> 
-> Gordian's Sandbox and Production Environments
-> 
-> Gordian's API has both a sandbox and production environment. The sandbox is equivalent to production environment except that it does not have permission to conduct a fulfillment request.
+<Note>
 
----
+    **Gordian's Sandbox and Production Environments**
+
+    Gordian's API has both a sandbox and production environment. The sandbox is equivalent to production environment except that it does not have permission to conduct a fulfillment request.
+</Note>
 
 ### Creating a trip
 
@@ -37,11 +34,9 @@ Creating a trip is the first step to using the API. Gordian provides two paths t
 * [Direct trip creation](#direct-trip-creation): For architectures that handle trips creation in the backend and are capable of backend-to-backend communication.
 * [Indirect trip creation](#indirect-trip-creation): For architectures that require your frontend application to handle trip creation and require frontend-to-backend communication.
 
-> 📘
-> 
-> If you are using the Gordian widget, you would use [indirect trip creation](#indirect-trip-creation)
-
----
+<Note>
+    If you are using the Gordian widget, you would use [indirect trip creation](#indirect-trip-creation)
+</Note>
 
 #### Direct trip creation
 
@@ -54,8 +49,6 @@ You receive two tokens to use in the subsequent steps of the customer journey: `
 
 Direct Trip Creation Diagram
 
----
-
 #### Indirect trip creation
 
 To create a trip indirectly, follow these steps:
@@ -66,8 +59,6 @@ To create a trip indirectly, follow these steps:
 ![1148](/images/7bb56f3-indirect-trip-creation.png "indirect-trip-creation.png")
 
 Indirect Trip Creation Diagram
-
----
 
 ### API key and Trip Access Token
 
@@ -85,9 +76,7 @@ When creating a trip, you receive two tokens with different expiration times:
 * `trip_access_token` – 30 minutes since its creation time.
 * `refresh_token` – 45 minutes since its creation time.
 
-To refresh the trip access token, use the [POST /v2.2/refresh\_token](/reference/refresh%5Ftrip%5Faccess%5Ftoken) endpoint.
-
----
+To refresh the trip access token, use the [POST /v2.2/refresh\_token](/api-reference/refresh%5Ftrip%5Faccess%5Ftoken) endpoint.
 
 ### Which authentication to use?
 
@@ -120,5 +109,3 @@ With the trip created, you can implement the rest of the customer journey with a
 | **_Callbacks_**                                                                                                               |          |                     |
 | [Subscribe to a trip event](/reference/subscribe)                                                                             | Yes      | No                  |
 | [Unsubscribe to a trip event](/reference/unsubscribeoperation)                                                                | Yes      | No                  |
-
----
